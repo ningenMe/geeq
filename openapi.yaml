@@ -1,0 +1,51 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: geeq-api
+paths:
+  /auth/oauth:
+    post:
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OauthPostRequestBody'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OauthPostOkResponse"
+components:
+  schemas:
+    OauthPostRequestBody:
+      properties:
+        code:
+          type: string
+      required:
+        - code
+    OauthPostOkResponse:
+      properties:
+        message:
+          type: string
+      required:
+        - message
+
+
+  # /auth/login:
+  #   post:
+  # /auth/logout:
+  #   post:
+  # /auth/me:
+  #   get:
+  # /task:
+  #   get:
+  # /task/{taskId}:
+  #   get:
+  # /task/{taskId}/submission:
+  #   post:
+  # /task/{taskId}/submission:
+  #   get:
