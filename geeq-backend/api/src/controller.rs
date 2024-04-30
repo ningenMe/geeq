@@ -33,7 +33,6 @@ impl generated::Api for Api where
                 }
             )),
             Err(res) => {
-                println!("{}", res);
                 todo!()
             }
         }

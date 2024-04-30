@@ -38,7 +38,6 @@ pub async fn get_github_access_token(code: String) -> Result<String,reqwest::Err
     .await?
     .text()
     .await?;
-    println!("{}",response);
     let dto = serde_json::from_str::<GithubLoginOauthAccessTokenDto>(&response).unwrap();
     return Ok(dto.access_token);
 }

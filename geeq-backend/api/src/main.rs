@@ -1,4 +1,4 @@
-use axum::http::{HeaderValue, Method};
+use axum::http::{HeaderName, HeaderValue, Method};
 use tower_http::cors::CorsLayer;
 
 mod controller;
@@ -15,6 +15,9 @@ async fn main() {
         Method::GET, 
         Method::POST,
         Method::OPTIONS
+    ])
+    .allow_headers([
+        HeaderName::from_static("content-type")
     ])
     ;
     let router = generated::server::new(api).layer(layer);
