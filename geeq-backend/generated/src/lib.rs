@@ -20,7 +20,13 @@ pub const API_VERSION: &str = "1.0.0";
 pub enum AuthOauthPostResponse {
 
     Status200
-    (models::OauthPostOkResponse)
+    {
+        body: models::OauthPostOkResponse,
+        set_cookie:
+        Option<
+        String
+        >
+    }
 }
 
 

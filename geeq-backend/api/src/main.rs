@@ -17,8 +17,9 @@ async fn main() {
         Method::OPTIONS
     ])
     .allow_headers([
-        HeaderName::from_static("content-type")
+        HeaderName::from_static("content-type"),
     ])
+    .allow_credentials(true)
     ;
     let router = generated::server::new(api).layer(layer);
     let listener = tokio::net::TcpListener::bind("0.0.0.0:50051")

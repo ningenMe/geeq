@@ -95,8 +95,30 @@ where
   let resp = match result {
                                             Ok(rsp) => match rsp {
                                                 AuthOauthPostResponse::Status200
-                                                    (body)
+                                                    {
+                                                        body,
+                                                        set_cookie
+                                                    }
                                                 => {
+                                                    if let Some(set_cookie) = set_cookie {
+                                                    let set_cookie = match header::IntoHeaderValue(set_cookie).try_into() {
+                                                        Ok(val) => val,
+                                                        Err(e) => {
+                                                            return Response::builder()
+                                                                    .status(StatusCode::INTERNAL_SERVER_ERROR)
+                                                                    .body(Body::from(format!("An internal server error occurred handling set_cookie header - {}", e))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
+                                                        }
+                                                    };
+
+                                                    
+                                                    {
+                                                      let mut response_headers = response.headers_mut().unwrap();
+                                                      response_headers.insert(
+                                                          HeaderName::from_static("set-cookie"),
+                                                          set_cookie
+                                                      );
+                                                    }
+                                                    }
 
                                                   let mut response = response.status(200);
                                                   {

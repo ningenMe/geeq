@@ -19,6 +19,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OauthPostOkResponse"
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: geeq-session-id=abcde12345; Path=/; HttpOnly
+  # /auth/me:
+  #   get:
+
 components:
   schemas:
     OauthPostRequestBody:
@@ -34,13 +42,8 @@ components:
       required:
         - message
 
-
-  # /auth/login:
-  #   post:
   # /auth/logout:
   #   post:
-  # /auth/me:
-  #   get:
   # /task:
   #   get:
   # /task/{taskId}:

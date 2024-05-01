@@ -10,9 +10,10 @@ export const Page: NextPage = () => {
     const code = searchParams.get("code");
     const router = useRouter()
 
+    // TODO 2回りクエストしてるのを直す
     useEffect(
         () => {
-            geeqApiClient.authOauthPost({code: code})
+            geeqApiClient.authOauthPost({code: code}, {withCredentials: true})
             .then(res => {
                 router.replace('/auth/me')
             })
