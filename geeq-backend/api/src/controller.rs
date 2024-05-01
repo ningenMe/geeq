@@ -3,7 +3,7 @@ use axum::{extract::Host, http::Method};
 
 use axum_extra::extract::{cookie::{Cookie, SameSite}, CookieJar};
 use generated::{models::OauthPostOkResponse, AuthOauthPostResponse};
-use infra::github_adapter::{post_login_oauth_access_token, get_user};
+use infra::{github_adapter::{get_user, post_login_oauth_access_token}, redis_repository};
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -25,16 +25,24 @@ impl generated::Api for Api where
     _cookies: CookieJar,
     request_body: generated::models::OauthPostRequestBody,
     ) -> Result<generated::AuthOauthPostResponse, String> {
+        //oauth認証を行う
         let result = post_login_oauth_access_token(request_body.code).await;
         if result.is_err() {
             return Err("error".to_string());
         }
+        //access_tokenを使ってユーザー情報を取得
         let user = get_user(result.unwrap().access_token).await;
-
-        //TODO session tokenをredisに永続化
-        //TODO expireを設定する
+        if user.is_err() {
+            return Err("error".to_string());
+        }
+        //TODO ユーザー情報をmysqlに保存
+        
+        //ユーザー情報を使ってsession_idを生成した後、redisに保存
         let session_id = generate_geeq_secure_session_id();
-        let cookie = Cookie::build(("geeq-session-id",session_id))
+        redis_repository::set_session(&session_id, user.unwrap().login);
+
+        //TODO expireを設定する
+        let cookie = Cookie::build(("geeq-session-id", session_id))
         .domain("localhost")
         .path("/")
         // .secure(true) // TODO ローカルと本番で使い分けれるようにする
@@ -42,19 +50,14 @@ impl generated::Api for Api where
         .same_site(SameSite::Strict)
         .build();
 
-        return match user {
-            Ok(_) => Ok(
-                AuthOauthPostResponse::Status200{ 
-                    body: OauthPostOkResponse{
-                        message: "ok".to_string(),
-                    },
-                    set_cookie: Some(cookie.to_string()),
-                }
-            ),
-            Err(_) => {
-                todo!()
+        return Ok(
+            AuthOauthPostResponse::Status200{ 
+                body: OauthPostOkResponse{
+                    message: "ok".to_string(),
+                },
+                set_cookie: Some(cookie.to_string()),
             }
-        }
+        )
     }    
 }
 

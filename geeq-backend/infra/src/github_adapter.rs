@@ -30,21 +30,21 @@ pub async fn post_login_oauth_access_token(code: String) -> Result<GithubLoginOa
 
     let client = reqwest::Client::new();
     let response = client
-    //TODO エンドポイントは定数ファイルにまとめる
-    .post("https://github.com/login/oauth/access_token")
-    .header(
-        reqwest::header::CONTENT_TYPE, 
-        reqwest::header::HeaderValue::from_static("application/json") // これどこかに定義ないのか？
-    )
-    .header(
-        reqwest::header::ACCEPT,
-        reqwest::header::HeaderValue::from_static("application/json")
-    )
-    .json(&map)
-    .send()
-    .await?
-    .text()
-    .await?;
+        //TODO エンドポイントは定数ファイルにまとめる
+        .post("https://github.com/login/oauth/access_token")
+        .header(
+            reqwest::header::CONTENT_TYPE, 
+            reqwest::header::HeaderValue::from_static("application/json") // これどこかに定義ないのか？
+        )
+        .header(
+            reqwest::header::ACCEPT,
+            reqwest::header::HeaderValue::from_static("application/json")
+        )
+        .json(&map)
+        .send()
+        .await?
+        .text()
+        .await?;
 
     //TODO intercepterとかでIOをログに落とす
     println!("{:?}", response);
