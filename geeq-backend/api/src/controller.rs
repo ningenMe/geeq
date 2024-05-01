@@ -3,7 +3,7 @@ use axum::{extract::Host, http::Method};
 
 use axum_extra::extract::{cookie::{Cookie, SameSite}, CookieJar};
 use generated::{models::OauthPostOkResponse, AuthOauthPostResponse};
-use infra::get_github_access_token;
+use infra::github_adapter::{post_login_oauth_access_token, get_user};
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -25,8 +25,12 @@ impl generated::Api for Api where
     _cookies: CookieJar,
     request_body: generated::models::OauthPostRequestBody,
     ) -> Result<generated::AuthOauthPostResponse, String> {
-        let res = get_github_access_token(request_body.code).await;
-        //TODO access_tokenを使ってuser情報を取得、その後access_tokenは破棄
+        let result = post_login_oauth_access_token(request_body.code).await;
+        if result.is_err() {
+            return Err("error".to_string());
+        }
+        let user = get_user(result.unwrap().access_token).await;
+
         //TODO session tokenをredisに永続化
         //TODO expireを設定する
         let session_id = generate_geeq_secure_session_id();
@@ -38,7 +42,7 @@ impl generated::Api for Api where
         .same_site(SameSite::Strict)
         .build();
 
-        return match res {
+        return match user {
             Ok(_) => Ok(
                 AuthOauthPostResponse::Status200{ 
                     body: OauthPostOkResponse{
