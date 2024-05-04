@@ -63,6 +63,7 @@ dependencies = [
  "async-trait",
  "axum",
  "axum-extra",
+ "domain",
  "futures",
  "generated",
  "http 0.2.12",
@@ -74,7 +75,6 @@ dependencies = [
  "tokio",
  "tokio-macros",
  "tower-http",
- "uuid 1.8.0",
 ]
 
 [[package]]
@@ -378,6 +378,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b42b6fa04a440b495c8b04d0e71b707c585f83cb9cb28cf8cd0d976c315e31b4"
 dependencies = [
  "powerfmt",
+]
+
+[[package]]
+name = "domain"
+version = "0.1.0"
+dependencies = [
+ "axum-extra",
+ "uuid 1.8.0",
 ]
 
 [[package]]

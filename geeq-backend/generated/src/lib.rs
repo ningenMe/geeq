@@ -32,6 +32,19 @@ pub enum AuthLoginPostResponse {
         #[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[must_use]
 #[allow(clippy::large_enum_variant)]
+pub enum AuthLogoutPostResponse {
+
+    Status200
+    (models::Common200Response)
+    ,
+
+    Status401
+    (models::Common401Response)
+}
+
+        #[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[must_use]
+#[allow(clippy::large_enum_variant)]
 pub enum AuthMeGetResponse {
 
     Status200
@@ -56,6 +69,15 @@ pub trait Api {
                 cookies: CookieJar,
                         body: models::AuthLoginPostRequestBody,
                 ) -> Result<AuthLoginPostResponse, String>;
+
+
+                /// AuthLogoutPost - POST /auth/logout
+                async fn auth_logout_post(
+                &self,
+                method: Method,
+                host: Host,
+                cookies: CookieJar,
+                ) -> Result<AuthLogoutPostResponse, String>;
 
 
                 /// AuthMeGet - GET /auth/me

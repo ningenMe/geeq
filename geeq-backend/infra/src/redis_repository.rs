@@ -36,6 +36,14 @@ pub fn get_session(session_id: &str) -> Option<String> {
     result
 }
 
+pub fn delete_session(session_id: &str) {
+    let client = redis::Client::open(&**REDIS_URL).unwrap();
+    let mut connection = client.get_connection().unwrap();
+
+    let key = get_redis_session_key(session_id);
+    let _: () = connection.del(&key).unwrap();
+}
+
 fn get_redis_session_key(session_id: &str) -> String {
     format!("geeq:session:{}", session_id)
 }

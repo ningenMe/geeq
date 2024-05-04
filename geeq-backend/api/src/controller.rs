@@ -1,10 +1,10 @@
 use async_trait::async_trait;
 use axum::{extract::Host, http::Method};
 
-use axum_extra::extract::{cookie::{Cookie, SameSite}, CookieJar};
+use axum_extra::extract::CookieJar;
+use domain::auth::{generate_geeq_session_id, get_geeq_session_cookie, GEEQ_SESSION_COOKIE_NAME};
 use generated::{models::{AuthMeGet200Response, Common200Response, Common401Response}, AuthLoginPostResponse};
 use infra::{github_adapter::{get_user, post_login_oauth_access_token}, redis_repository};
-use uuid::Uuid;
 
 #[derive(Clone)]
 pub struct Api {}
@@ -38,17 +38,10 @@ impl generated::Api for Api where
         //TODO ユーザー情報をmysqlに保存
         
         //ユーザー情報を使ってsession_idを生成した後、redisに保存
-        let session_id = generate_geeq_secure_session_id();
+        let session_id = generate_geeq_session_id();
         redis_repository::set_session(&session_id, user.unwrap().login);
 
-        //TODO expireを設定する
-        let cookie = Cookie::build(("geeq-session-id", session_id))
-        .domain("localhost")
-        .path("/")
-        // .secure(true) // TODO ローカルと本番で使い分けれるようにする
-        .http_only(true)
-        .same_site(SameSite::Strict)
-        .build();
+        let cookie = get_geeq_session_cookie(&session_id);
 
         return Ok(
             AuthLoginPostResponse::Status200 { 
@@ -66,7 +59,7 @@ impl generated::Api for Api where
     _host: Host,
     cookies: CookieJar,
     ) -> Result<generated::AuthMeGetResponse, String> {
-        let session_id = cookies.get("geeq-session-id");
+        let session_id = cookies.get(GEEQ_SESSION_COOKIE_NAME);
         if session_id.is_none() {
             return Ok(generated::AuthMeGetResponse::Status401(Common401Response
                 { message: "Unauthenticated".to_string() }
@@ -81,11 +74,23 @@ impl generated::Api for Api where
         return Ok(generated::AuthMeGetResponse::Status200(AuthMeGet200Response
             { user_id: user_id.unwrap() }
         ));
+    }
+    
+    async fn auth_logout_post(
+    &self,
+    _method: Method,
+    _host: Host,
+    cookies: CookieJar,
+    ) -> Result<generated::AuthLogoutPostResponse, String> {
+        let session_id = cookies.get(GEEQ_SESSION_COOKIE_NAME);
+        if session_id.is_none() {
+            return Ok(generated::AuthLogoutPostResponse::Status401(Common401Response
+                { message: "Unauthenticated".to_string() }
+            ));
+        }
+        redis_repository::delete_session(session_id.unwrap().value());
+        return Ok(generated::AuthLogoutPostResponse::Status200(Common200Response
+            { message: "ok".to_string() }
+        ));
     }    
-}
-
-//TODO domainmodelに移動
-fn generate_geeq_secure_session_id() -> String {
-    let geeq_session_id = Uuid::new_v4().to_string();
-    geeq_session_id
 }
