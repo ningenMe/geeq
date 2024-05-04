@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { NextPage } from "next/types"
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { geeqApiClient } from "../../../components/client/GeeqApiClient";
 
 export const Page: NextPage = () => {
@@ -14,9 +14,9 @@ export const Page: NextPage = () => {
     useEffect(() => {
         if (!isRequested.current) {
             isRequested.current = true;
-            geeqApiClient.authOauthPost({ code: code }, { withCredentials: true })
-                .then(res => {
-                    router.replace('/auth/me');
+            geeqApiClient.authLoginPost({ code: code }, { withCredentials: true })
+                .then(() => {
+                    router.replace('/');
                 });
         }
     }, [geeqApiClient, code, router]);
