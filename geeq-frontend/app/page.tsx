@@ -3,6 +3,7 @@
 import { NextPage } from "next";
 import { geeqApiClient } from "../components/client/GeeqApiClient";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export const Page: NextPage = () => {
   // TODO 環境変数に入れる
@@ -11,6 +12,7 @@ export const Page: NextPage = () => {
   const redirect_url = "http://localhost:3000/auth/callback"
   const github_oauth_url = `https://github.com/login/oauth/authorize?client_id=${github_client_id}&redirect_url=${redirect_url}`;
   const [loginUserId, setLoginUserId] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     geeqApiClient.authMeGet({ withCredentials: true })
@@ -18,18 +20,24 @@ export const Page: NextPage = () => {
         setLoginUserId(res.data.userId);
       });
   }, [geeqApiClient]);
-
   return (
     <>
-      <a
-        className='App-link'
-        href={github_oauth_url}
+      <button
+        onClick={() => {
+          router.replace(github_oauth_url)
+        }}
       >
-        LOGIN with Github
-      </a>
+        LOGIN
+      </button>
       <a>
         {loginUserId} logined
       </a>
+      <button onClick={() => {
+        geeqApiClient.authLogoutPost({ withCredentials: true})
+        setLoginUserId(null);
+      }}>
+        LOGOUT
+      </button>
       <h1>Hello, Next.js!</h1>
     </>
   )
