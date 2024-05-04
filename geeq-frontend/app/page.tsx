@@ -29,16 +29,14 @@ export const Page: NextPage = () => {
       >
         LOGIN
       </button>
-      <a>
-        {loginUserId} logined
-      </a>
       <button onClick={() => {
         geeqApiClient.authLogoutPost({ withCredentials: true})
         setLoginUserId(null);
       }}>
         LOGOUT
       </button>
-      <h1>Hello, Next.js!</h1>
+      <h1>Hello, Geeq</h1>
+      <a>{loginUserId ? loginUserId+" Logined" : "You Are Guest User"}</a>
     </>
   )
 }
