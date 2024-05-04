@@ -3,14 +3,14 @@ info:
   version: 1.0.0
   title: geeq-api
 paths:
-  /auth/oauth:
+  /auth/login:
     post:
       requestBody:
         description: ''
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OauthPostRequestBody'
+              $ref: '#/components/schemas/AuthLoginPostRequestBody'
         required: true
       responses:
         '200':
@@ -18,24 +18,61 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/OauthPostOkResponse"
+                $ref: "#/components/schemas/Common200Response"
           headers:
             Set-Cookie:
               schema:
                 type: string
                 example: geeq-session-id=abcde12345; Path=/; HttpOnly
-  # /auth/me:
-  #   get:
+  /auth/me:
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthMeGet200Response"
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Common401Response"
 
 components:
   schemas:
-    OauthPostRequestBody:
+    AuthLoginPostRequestBody:
       properties:
         code:
           type: string
       required:
         - code
-    OauthPostOkResponse:
+    AuthMeGet200Response:
+      properties:
+        userId:
+          type: string
+      required:
+        - userId
+    Common200Response:
+      properties:
+        message:
+          type: string
+      required:
+        - message
+    Common401Response:
+      properties:
+        message:
+          type: string
+      required:
+        - message
+    Common403Response:
+      properties:
+        message:
+          type: string
+      required:
+        - message
+    Common500Response:
       properties:
         message:
           type: string

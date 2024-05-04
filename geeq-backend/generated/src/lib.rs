@@ -17,16 +17,29 @@ pub const API_VERSION: &str = "1.0.0";
         #[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[must_use]
 #[allow(clippy::large_enum_variant)]
-pub enum AuthOauthPostResponse {
+pub enum AuthLoginPostResponse {
 
     Status200
     {
-        body: models::OauthPostOkResponse,
+        body: models::Common200Response,
         set_cookie:
         Option<
         String
         >
     }
+}
+
+        #[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[must_use]
+#[allow(clippy::large_enum_variant)]
+pub enum AuthMeGetResponse {
+
+    Status200
+    (models::AuthMeGet200Response)
+    ,
+
+    Status401
+    (models::Common401Response)
 }
 
 
@@ -35,14 +48,23 @@ pub enum AuthOauthPostResponse {
 #[allow(clippy::ptr_arg)]
 pub trait Api {
 
-                /// AuthOauthPost - POST /auth/oauth
-                async fn auth_oauth_post(
+                /// AuthLoginPost - POST /auth/login
+                async fn auth_login_post(
                 &self,
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                        body: models::OauthPostRequestBody,
-                ) -> Result<AuthOauthPostResponse, String>;
+                        body: models::AuthLoginPostRequestBody,
+                ) -> Result<AuthLoginPostResponse, String>;
+
+
+                /// AuthMeGet - GET /auth/me
+                async fn auth_me_get(
+                &self,
+                method: Method,
+                host: Host,
+                cookies: CookieJar,
+                ) -> Result<AuthMeGetResponse, String>;
 
 }
 

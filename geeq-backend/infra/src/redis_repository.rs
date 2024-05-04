@@ -21,8 +21,21 @@ pub fn set_session(session_id: &str, user_id: String) {
     let client = redis::Client::open(&**REDIS_URL).unwrap();
     let mut connection = client.get_connection().unwrap();
 
-    let key = format!("geeq:session:{}", session_id);
+    let key = get_redis_session_key(session_id);
     let _: () = connection.set(&key, user_id).unwrap();
     //30日間有効
     let _: () = connection.expire(&key, 3600 * 24 * 30).unwrap(); 
+}
+
+pub fn get_session(session_id: &str) -> Option<String> {
+    let client = redis::Client::open(&**REDIS_URL).unwrap();
+    let mut connection = client.get_connection().unwrap();
+
+    let key = get_redis_session_key(session_id);
+    let result: Option<String> = connection.get(&key).unwrap();
+    result
+}
+
+fn get_redis_session_key(session_id: &str) -> String {
+    format!("geeq:session:{}", session_id)
 }
