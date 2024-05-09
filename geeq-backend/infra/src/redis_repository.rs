@@ -1,12 +1,11 @@
+use domain::environment::ENV;
 use once_cell::sync::Lazy;
 use redis::Commands;
-use std::env;
 
 static NINGENME_REDIS_HOST: Lazy<String> = Lazy::new(|| {
-    //TODO 本番/localで書き分ける
-    match env::var("NINGENME_REDIS_HOST") {
-        Ok(it) => it,
-        Err(_) => "127.0.0.1".to_string(),
+    match *ENV {
+        domain::environment::Environment::Prod => "ningenme-redis".to_string(),
+        domain::environment::Environment::Local => "127.0.0.1".to_string(),
     }
 });
 

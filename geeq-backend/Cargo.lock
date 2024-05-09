@@ -385,6 +385,7 @@ name = "domain"
 version = "0.1.0"
 dependencies = [
  "axum-extra",
+ "once_cell",
  "uuid 1.8.0",
 ]
 
@@ -972,6 +973,7 @@ name = "infra"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "domain",
  "futures",
  "once_cell",
  "openssl",

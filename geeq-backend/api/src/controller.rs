@@ -28,12 +28,16 @@ impl generated::Api for Api where
         //oauth認証を行う
         let result = post_login_oauth_access_token(request_body.code).await;
         if result.is_err() {
-            return Err("error".to_string());
+            return Ok(generated::AuthLoginPostResponse::Status401(Common401Response {
+                message: "Unauthorized".to_string(),
+            }));
         }
         //access_tokenを使ってユーザー情報を取得
         let user = get_user(result.unwrap().access_token).await;
         if user.is_err() {
-            return Err("error".to_string());
+            return Ok(generated::AuthLoginPostResponse::Status401(Common401Response {
+                message: "Unauthorized".to_string(),
+            }));
         }
         //TODO ユーザー情報をmysqlに保存
         

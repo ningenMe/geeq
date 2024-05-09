@@ -27,6 +27,10 @@ pub enum AuthLoginPostResponse {
         String
         >
     }
+    ,
+
+    Status401
+    (models::Common401Response)
 }
 
         #[derive(Debug, PartialEq, Serialize, Deserialize)]
