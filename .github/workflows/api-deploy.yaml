@@ -21,7 +21,7 @@ jobs:
     steps:
       - id: checkout
         name: checkout
-        uses: actions/checkout@v3.5.0
+        uses: actions/checkout@v4.1.5
       - id: constant
         name: constant
         uses: ningenMe/chiyuki-k8s-config/action/constant@main
@@ -31,7 +31,7 @@ jobs:
     steps:
       - id: checkout
         name: checkout
-        uses: actions/checkout@v3.5.0
+        uses: actions/checkout@v4.1.5
       - id: setup-rustup
         name: setup rustup
         uses: ningenMe/setup-rustup@v1.1.0
@@ -68,7 +68,7 @@ jobs:
     steps:
       - id: checkout
         name: checkout
-        uses: actions/checkout@v3.5.0
+        uses: actions/checkout@v4.1.5
       - id: kick-deploy
         name: kick deploy
         uses: ningenMe/chiyuki-k8s-config/action/kick-deploy@main
