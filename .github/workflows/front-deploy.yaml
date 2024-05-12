@@ -1,0 +1,66 @@
+name: deploy front
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write
+
+run-name: deploy front
+
+jobs:
+  constant:
+    runs-on: ubuntu-latest
+    outputs:
+      aws-region: ${{ steps.constant.outputs.aws-region }}
+      aws-ecr-registry: ${{ secrets.AWS_ECR_REGISTRY }}
+      docker-image-name: geeq-front-repository:${{ github.sha }}
+      node-version: ${{ steps.constant.outputs.node-version }}
+    steps:
+      - id: checkout
+        name: checkout
+        uses: actions/checkout@v4.1.5
+      - id: constant
+        name: constant
+        uses: ningenMe/chiyuki-k8s-config/action/constant@main
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    needs: [ constant ]
+    steps:
+      - id: checkout
+        name: checkout
+        uses: actions/checkout@v4.1.5
+      - id: setup-node
+        name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ needs.constant.outputs.node-version }}
+      - id: setup-node
+        name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ needs.constant.outputs.node-version }}
+      - id: docker-image-push
+        name: docker-image-push
+        uses: ningenMe/chiyuki-k8s-config/action/docker-image-push@main
+        with:
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+          aws-region: ${{ needs.constant.outputs.aws-region }}
+          aws-ecr-registry: ${{ secrets.AWS_ECR_REGISTRY }}
+          docker-image-name: ${{ needs.constant.outputs.docker-image-name }}
+          dockerfile-path: ./geeq-backend/api
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [ constant, build-and-push-image ]
+    steps:
+      - id: checkout
+        name: checkout
+        uses: actions/checkout@v4.1.5
+      - id: kick-deploy
+        name: kick deploy
+        uses: ningenMe/chiyuki-k8s-config/action/kick-deploy@main
+        with:
+          deploy-token: ${{ secrets.DEPLOY_TOKEN }}
+          application-name: geeq-api

@@ -1,11 +1,10 @@
 "use client"
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { NextPage } from "next/types"
-import { useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { geeqApiClient } from "../../../components/client/GeeqApiClient";
 
-export const Page: NextPage = () => {
+const AuthCallBack = () => {
     const searchParams = useSearchParams();
     const code = searchParams.get("code");
     const router = useRouter();
@@ -20,6 +19,13 @@ export const Page: NextPage = () => {
                 });
         }
     }, [geeqApiClient, code, router]);
-    return <div>callback中...</div>
+    return <></>
 }
-export default Page
+
+export default function Page() {
+    return (
+    <Suspense fallback= {<div>callback中...</div>}>
+        <AuthCallBack />
+    </Suspense>
+    )
+}

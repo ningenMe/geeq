@@ -5,7 +5,7 @@ import { geeqApiClient } from "../components/client/GeeqApiClient";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export const Page: NextPage = () => {
+export default function Page() {
   // TODO 環境変数に入れる
   const github_client_id = "Iv1.17c5ebb1ad2d2832";
   // TODO local/本番で使い分ける
@@ -40,5 +40,3 @@ export const Page: NextPage = () => {
     </>
   )
 }
-
-export default Page;
