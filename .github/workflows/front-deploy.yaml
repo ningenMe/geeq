@@ -51,7 +51,7 @@ jobs:
           aws-region: ${{ needs.constant.outputs.aws-region }}
           aws-ecr-registry: ${{ secrets.AWS_ECR_REGISTRY }}
           docker-image-name: ${{ needs.constant.outputs.docker-image-name }}
-          dockerfile-path: ./geeq-frontend/Dockerfile
+          dockerfile-path: ./geeq-frontend
   deploy:
     runs-on: ubuntu-latest
     needs: [ constant, build-and-push-image ]
