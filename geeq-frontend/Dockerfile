@@ -1,5 +1,5 @@
 FROM node:20.0.0-alpine3.17
 
-COPY geeq-frontend/ /app/
+COPY geeq-frontend/ /app/front
 
-CMD ["cd","/app/geeq-frontend","&&","npm","run","start"]
+CMD ["npm","run","start","--prefix","/app/front"]
