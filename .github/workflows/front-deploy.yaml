@@ -37,11 +37,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ needs.constant.outputs.node-version }}
-      - id: setup-node
-        name: setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ needs.constant.outputs.node-version }}
+      - id: build-npm
+        name: build npm
+        run: |
+          npm build
+        working-directory: ./geeq-frontend
+        shell: bash
       - id: docker-image-push
         name: docker-image-push
         uses: ningenMe/chiyuki-k8s-config/action/docker-image-push@main
@@ -50,7 +51,7 @@ jobs:
           aws-region: ${{ needs.constant.outputs.aws-region }}
           aws-ecr-registry: ${{ secrets.AWS_ECR_REGISTRY }}
           docker-image-name: ${{ needs.constant.outputs.docker-image-name }}
-          dockerfile-path: ./geeq-backend/api
+          dockerfile-path: ./geeq-frontend/Dockerfile
   deploy:
     runs-on: ubuntu-latest
     needs: [ constant, build-and-push-image ]
@@ -63,4 +64,4 @@ jobs:
         uses: ningenMe/chiyuki-k8s-config/action/kick-deploy@main
         with:
           deploy-token: ${{ secrets.DEPLOY_TOKEN }}
-          application-name: geeq-api
+          application-name: geeq-front
