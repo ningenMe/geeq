@@ -40,7 +40,8 @@ jobs:
       - id: build-npm
         name: build npm
         run: |
-          npm build
+          npm install
+          npm run build
         working-directory: ./geeq-frontend
         shell: bash
       - id: docker-image-push
