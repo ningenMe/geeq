@@ -12,9 +12,9 @@ pub fn generate_geeq_session_id() -> String {
     geeq_session_id
 }
 
-static FRONT_DOMAIN: Lazy<String> = Lazy::new(|| {
+static FRONT_COOKIE_DOMAIN: Lazy<String> = Lazy::new(|| {
     match *ENV {
-        Environment::Prod => "geeq.ningenme.net".to_string(),
+        Environment::Prod => "ningenme.net".to_string(),
         Environment::Local => "localhost".to_string(),
     }
 });
@@ -26,13 +26,20 @@ static IS_SECURE: Lazy<bool> = Lazy::new(|| {
     }
 });
 
+static SAME_SITE: Lazy<SameSite> = Lazy::new(|| {
+    match *ENV {
+        Environment::Prod => SameSite::None, // client/serverで異なるドメインなのでNoneにする
+        Environment::Local => SameSite::Strict,
+    }
+});
+
 pub fn get_geeq_session_cookie<'a>(session_id: &'a str) -> Cookie<'a> {
     let cookie = Cookie::build((GEEQ_SESSION_COOKIE_NAME, session_id))
-        .domain(&*FRONT_DOMAIN) 
+        .domain(&*FRONT_COOKIE_DOMAIN) 
         .path("/")
         .secure(*IS_SECURE)
         .http_only(true)
-        .same_site(SameSite::Strict)
+        .same_site(*SAME_SITE)
         .build();
     cookie       
 }
