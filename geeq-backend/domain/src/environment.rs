@@ -1,5 +1,5 @@
-use std::str::FromStr;
 use std::env;
+use std::str::FromStr;
 
 use once_cell::sync::Lazy;
 
@@ -9,14 +9,13 @@ pub enum Environment {
     Local,
 }
 
-
 impl FromStr for Environment {
     type Err = ();
     fn from_str(input: &str) -> Result<Environment, Self::Err> {
         match input {
-            "prod"  => Ok(Environment::Prod),
+            "prod" => Ok(Environment::Prod),
             "local" => Ok(Environment::Local),
-            _       => Err(()),
+            _ => Err(()),
         }
     }
 }

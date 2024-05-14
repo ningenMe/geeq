@@ -2,19 +2,12 @@ use domain::environment::ENV;
 use once_cell::sync::Lazy;
 use redis::Commands;
 
-static NINGENME_REDIS_HOST: Lazy<String> = Lazy::new(|| {
-    match *ENV {
-        domain::environment::Environment::Prod => "ningenme-redis".to_string(),
-        domain::environment::Environment::Local => "127.0.0.1".to_string(),
-    }
+static NINGENME_REDIS_HOST: Lazy<String> = Lazy::new(|| match *ENV {
+    domain::environment::Environment::Prod => "ningenme-redis".to_string(),
+    domain::environment::Environment::Local => "127.0.0.1".to_string(),
 });
 
-static REDIS_URL: Lazy<String> = Lazy::new(|| {
-    format!(
-        "redis://{}:6379/",
-        *NINGENME_REDIS_HOST,
-    )
-});
+static REDIS_URL: Lazy<String> = Lazy::new(|| format!("redis://{}:6379/", *NINGENME_REDIS_HOST,));
 
 pub fn set_session(session_id: &str, user_id: String) {
     let client = redis::Client::open(&**REDIS_URL).unwrap();
@@ -23,7 +16,7 @@ pub fn set_session(session_id: &str, user_id: String) {
     let key = get_redis_session_key(session_id);
     let _: () = connection.set(&key, user_id).unwrap();
     //30日間有効
-    let _: () = connection.expire(&key, 3600 * 24 * 30).unwrap(); 
+    let _: () = connection.expire(&key, 3600 * 24 * 30).unwrap();
 }
 
 pub fn get_session(session_id: &str) -> Option<String> {
