@@ -19,21 +19,8 @@ export default function Page() {
   }, [geeqApiClient]);
   return (
     <>
-      <button
-        onClick={() => {
-          router.replace(github_oauth_url);
-        }}
-      >
-        LOGIN
-      </button>
-      <button
-        onClick={() => {
-          geeqApiClient.authLogoutPost({ withCredentials: true });
-          setLoginUserId(null);
-        }}
-      >
-        LOGOUT
-      </button>
+      <LoginButton />
+      <LogoutButton />
       <h1>Hello, Geeq</h1>
       <h1>redirect_uri = {redirect_uri}</h1>
       <a>{loginUserId ? loginUserId + " Logined" : "You Are Guest User"}</a>
