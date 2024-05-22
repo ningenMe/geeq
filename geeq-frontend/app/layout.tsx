@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { Header } from "../components/header";
 
 export const metadata: Metadata = {
   title: "geeq",
@@ -14,7 +15,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body>{children}</body>
+      <body>
+        <Header />
+        {children}
+      </body>
     </html>
   );
 }
