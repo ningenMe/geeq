@@ -1,24 +1,15 @@
 "use client";
-
 import { useRouter } from "next/navigation";
-import { Suspense, useEffect } from "react";
 import { geeqApiClient } from "../../../components/client/GeeqApiClient";
 
-const Logout = () => {
+export default function Page() {
   const router = useRouter();
-
-  useEffect(() => {
-    geeqApiClient.authLogoutPost({ withCredentials: true }).then(() => {
+  geeqApiClient
+    .authLogoutPost({ withCredentials: true })
+    .catch(() => {})
+    .finally(() => {
       router.replace("/");
     });
-  }, [geeqApiClient, router]);
-  return <></>;
-};
 
-export default function Page() {
-  return (
-    <Suspense fallback={<div>logout中...</div>}>
-      <Logout />
-    </Suspense>
-  );
+  return <></>;
 }

@@ -8,14 +8,11 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import Container from "@mui/material/Container";
 import PersonIcon from "@mui/icons-material/Person";
-import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import CodeIcon from "@mui/icons-material/Code";
-import LoginIcon from "@mui/icons-material/Login";
 import { useEffect, useState } from "react";
 import { GITHUB_CLIENT_ID } from "./constant";
 import { geeqApiClient } from "./client/GeeqApiClient";
-import { log } from "console";
 
 export const Header = () => {
   const productName = "GEEQ";
@@ -42,10 +39,13 @@ export const Header = () => {
   };
 
   useEffect(() => {
-    geeqApiClient.authMeGet({ withCredentials: true }).then((res) => {
-      setLoginUserId(res.data.userId);
-    });
-  }, [geeqApiClient, loginUserId]);
+    geeqApiClient
+      .authMeGet({ withCredentials: true })
+      .then((res) => {
+        setLoginUserId(res.data.userId);
+      })
+      .catch(() => {});
+  }, [geeqApiClient.authLoginPost, geeqApiClient.authLogoutPost]);
 
   return (
     <AppBar position="static">
