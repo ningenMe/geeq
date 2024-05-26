@@ -48,7 +48,7 @@ impl generated::Api for Api {
 
         //ユーザー情報を使ってsession_idを生成した後、redisに保存
         let session = Session::new();
-        redis_repository::set_session(&session, user.unwrap().login);
+        redis_repository::set_session(&session, user.unwrap().get_user_id());
 
         let cookie = session.get_geeq_session_cookie();
 

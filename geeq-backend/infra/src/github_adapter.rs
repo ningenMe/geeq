@@ -1,3 +1,4 @@
+use domain::user::User;
 use once_cell::sync::Lazy;
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -46,7 +47,7 @@ pub async fn post_login_oauth_access_token(code: String) -> Result<GithubLoginOa
     return Ok(dto);
 }
 
-pub async fn get_user(access_token: String) -> Result<GithubUserDto, reqwest::Error> {
+pub async fn get_user(access_token: String) -> Result<User, reqwest::Error> {
     let client = reqwest::Client::new();
     let response = client
         .get("https://api.github.com/user")
@@ -63,5 +64,5 @@ pub async fn get_user(access_token: String) -> Result<GithubUserDto, reqwest::Er
     //TODO intercepterとかでIOをログに落とす
     println!("{:?}", response);
     let dto = serde_json::from_str::<GithubUserDto>(&response).unwrap();
-    return Ok(dto);
+    return Ok(User::new(dto.login, dto.avatar_url));
 }

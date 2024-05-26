@@ -9,7 +9,7 @@ static NINGENME_REDIS_HOST: Lazy<String> = Lazy::new(|| match *ENV {
 
 static REDIS_URL: Lazy<String> = Lazy::new(|| format!("redis://{}:6379/", *NINGENME_REDIS_HOST,));
 
-pub fn set_session(session: &Session, user_id: String) {
+pub fn set_session(session: &Session, user_id: &str) {
     let client = redis::Client::open(&**REDIS_URL).unwrap();
     let mut connection = client.get_connection().unwrap();
 
