@@ -2,7 +2,7 @@ use async_trait::async_trait;
 use axum::{extract::Host, http::Method};
 
 use axum_extra::extract::CookieJar;
-use domain::auth::{generate_geeq_session_id, get_geeq_session_cookie, GEEQ_SESSION_COOKIE_NAME};
+use domain::auth::Session;
 use generated::{
     models::{AuthMeGet200Response, Common200Response, Common401Response},
     AuthLoginPostResponse,
@@ -47,10 +47,10 @@ impl generated::Api for Api {
         //TODO ユーザー情報をmysqlに保存
 
         //ユーザー情報を使ってsession_idを生成した後、redisに保存
-        let session_id = generate_geeq_session_id();
-        redis_repository::set_session(&session_id, user.unwrap().login);
+        let session = Session::new();
+        redis_repository::set_session(&session, user.unwrap().login);
 
-        let cookie = get_geeq_session_cookie(&session_id);
+        let cookie = session.get_geeq_session_cookie();
 
         return Ok(AuthLoginPostResponse::Status200 {
             body: Common200Response { message: "ok".to_string() },
@@ -59,13 +59,16 @@ impl generated::Api for Api {
     }
 
     async fn auth_me_get(&self, _method: Method, _host: Host, cookies: CookieJar) -> Result<generated::AuthMeGetResponse, String> {
-        let session_id = cookies.get(GEEQ_SESSION_COOKIE_NAME);
-        if session_id.is_none() {
-            return Ok(generated::AuthMeGetResponse::Status401(Common401Response {
-                message: "Unauthenticated".to_string(),
-            }));
-        }
-        let user_id = redis_repository::get_session(session_id.unwrap().value());
+        let session = match Session::new_with_session_id(cookies) {
+            Ok(session) => session,
+            Err(_) => {
+                return Ok(generated::AuthMeGetResponse::Status401(Common401Response {
+                    message: "Unauthenticated".to_string(),
+                }));
+            }
+        };
+
+        let user_id = redis_repository::get_session(&session);
         if user_id.is_none() {
             return Ok(generated::AuthMeGetResponse::Status401(Common401Response {
                 message: "Unauthenticated".to_string(),
@@ -75,13 +78,16 @@ impl generated::Api for Api {
     }
 
     async fn auth_logout_post(&self, _method: Method, _host: Host, cookies: CookieJar) -> Result<generated::AuthLogoutPostResponse, String> {
-        let session_id = cookies.get(GEEQ_SESSION_COOKIE_NAME);
-        if session_id.is_none() {
-            return Ok(generated::AuthLogoutPostResponse::Status401(Common401Response {
-                message: "Unauthenticated".to_string(),
-            }));
-        }
-        redis_repository::delete_session(session_id.unwrap().value());
+        let session = match Session::new_with_session_id(cookies) {
+            Ok(session) => session,
+            Err(_) => {
+                return Ok(generated::AuthLogoutPostResponse::Status401(Common401Response {
+                    message: "Unauthenticated".to_string(),
+                }));
+            }
+        };
+
+        redis_repository::delete_session(&session);
         return Ok(generated::AuthLogoutPostResponse::Status200(Common200Response { message: "ok".to_string() }));
     }
 }
