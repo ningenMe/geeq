@@ -16,7 +16,8 @@ const AuthCallBack = () => {
       geeqApiClient
         .authLoginPost({ code: code }, { withCredentials: true })
         .then(() => {
-          router.replace("/");
+          router.push("/");
+          router.refresh();
         });
     }
   }, [geeqApiClient, code, router]);

@@ -13,22 +13,53 @@ import CodeIcon from "@mui/icons-material/Code";
 import { useEffect, useState } from "react";
 import { GITHUB_CLIENT_ID } from "./constant";
 import { geeqApiClient } from "./client/GeeqApiClient";
+import { useRouter } from "next/navigation";
 
 export const Header = () => {
   const productName = "GEEQ";
   const redirectUri = process.env.NEXT_PUBLIC_FRONT_ORIGIN + "/auth/callback";
   const githubOauthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${redirectUri}`;
+  const router = useRouter();
 
   const [loginUserId, setLoginUserId] = useState<string | null>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+
+  useEffect(() => {
+    geeqApiClient
+      .authMeGet({
+        withCredentials: true,
+      })
+      .then((res) => {
+        setLoginUserId(res.data.userId);
+      })
+      .catch(() => {
+        setLoginUserId(null);
+      });
+  });
+
   const settings = [
     {
       name: "マイページ",
-      href: "/user/" + loginUserId,
       isDisplayed: !!loginUserId,
+      onClick: () => {
+        router.push("/user/" + loginUserId);
+      },
     },
-    { name: "GitHubログイン", href: githubOauthUrl, isDisplayed: !loginUserId },
-    { name: "ログアウト", href: "/auth/logout", isDisplayed: !!loginUserId },
+    {
+      name: "GitHubログイン",
+      isDisplayed: !loginUserId,
+      onClick: () => {
+        router.push(githubOauthUrl);
+      },
+    },
+    {
+      name: "ログアウト",
+      href: "/auth/logout",
+      isDisplayed: !!loginUserId,
+      onClick: () => {
+        router.push("/auth/logout");
+      },
+    },
   ];
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -37,15 +68,6 @@ export const Header = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-
-  useEffect(() => {
-    geeqApiClient
-      .authMeGet({ withCredentials: true })
-      .then((res) => {
-        setLoginUserId(res.data.userId);
-      })
-      .catch(() => {});
-  }, [geeqApiClient.authLoginPost, geeqApiClient.authLogoutPost]);
 
   return (
     <AppBar position="static">
@@ -74,6 +96,7 @@ export const Header = () => {
           <Box sx={{ flexGrow: 0 }}>
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
               <PersonIcon fontSize="large" />
+              {loginUserId}
             </IconButton>
             <Menu
               sx={{ mt: "45px" }}
@@ -93,9 +116,13 @@ export const Header = () => {
             >
               {settings
                 .filter(({ isDisplayed }) => isDisplayed)
-                .map(({ name, href }) => (
+                .map(({ name, onClick }) => (
                   <MenuItem key={name} onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center" component="a" href={href}>
+                    <Typography
+                      textAlign="center"
+                      component="a"
+                      onClick={onClick}
+                    >
                       {name}
                     </Typography>
                   </MenuItem>

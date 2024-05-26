@@ -8,7 +8,7 @@ export default function Page() {
     .authLogoutPost({ withCredentials: true })
     .catch(() => {})
     .finally(() => {
-      router.replace("/");
+      router.push("/");
     });
 
   return <></>;

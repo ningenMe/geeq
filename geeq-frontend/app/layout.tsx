@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { Header } from "../components/header";
 
 export const metadata: Metadata = {
   title: "geeq",
@@ -8,17 +7,14 @@ export const metadata: Metadata = {
   keywords: ["geeq", "quiz", "engineering"],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <html lang="ja">
-      <body>
-        <Header />
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
