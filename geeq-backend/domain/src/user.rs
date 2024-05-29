@@ -14,4 +14,7 @@ impl User {
     pub fn get_user_id(&self) -> &str {
         &self.user_id
     }
+    pub fn get_avatar_url(&self) -> &str {
+        &self.avatar_url
+    }
 }

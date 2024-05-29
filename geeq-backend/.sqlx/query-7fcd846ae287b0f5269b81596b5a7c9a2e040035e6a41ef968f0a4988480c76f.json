@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "INSERT INTO user (user_id, avatar_url)\n         VALUES (?, ?) AS new ON DUPLICATE KEY UPDATE avatar_url = new.avatar_url ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "7fcd846ae287b0f5269b81596b5a7c9a2e040035e6a41ef968f0a4988480c76f"
+}

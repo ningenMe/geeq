@@ -4,8 +4,8 @@ use sqlx::{mysql::MySqlPoolOptions, MySql, Pool};
 use std::env;
 use std::time::Duration;
 
-static NINGENME_MYSQL_MASTER_USER_USERNAME: Lazy<String> = Lazy::new(|| env::var("NINGENME_MYSQL_MASTER_USER_USERNAME").expect("env variable is not found"));
-static NINGENME_MYSQL_MASTER_USER_PASSWORD: Lazy<String> = Lazy::new(|| env::var("NINGENME_MYSQL_MASTER_USER_PASSWORD").expect("env variable is not found"));
+static NINGENME_MYSQL_MASTER_USER_USERNAME: Lazy<String> = Lazy::new(|| env::var("NINGENME_MYSQL_GEEQ_USER_USERNAME").expect("env variable is not found"));
+static NINGENME_MYSQL_MASTER_USER_PASSWORD: Lazy<String> = Lazy::new(|| env::var("NINGENME_MYSQL_GEEQ_USER_PASSWORD").expect("env variable is not found"));
 static NINGENME_MYSQL_HOST: Lazy<String> = Lazy::new(|| env::var("NINGENME_MYSQL_HOST").expect("env variable is not found"));
 static NINGENME_MYSQL_PORT: Lazy<String> = Lazy::new(|| env::var("NINGENME_MYSQL_PORT").expect("env variable is not found"));
 static DATABASE_URL: Lazy<String> = Lazy::new(|| {
@@ -28,12 +28,18 @@ static POOL: Lazy<Pool<MySql>> = Lazy::new(|| {
     });
 });
 
+#[derive(Debug)]
+struct UserDto {
+    pub user_id: String,
+    pub avatar_url: String,
+}
+
 pub async fn insert(user: User) -> Result<(), sqlx::Error> {
     sqlx::query!(
-        "INSERT INTO blog (user_id, avatar_url)
+        "INSERT INTO user (user_id, avatar_url)
          VALUES (?, ?) AS new ON DUPLICATE KEY UPDATE avatar_url = new.avatar_url ",
-        user.login,
-        user.avatar_url
+        user.get_user_id(),
+        user.get_avatar_url()
     )
     .execute(&*POOL)
     .await?;
@@ -41,8 +47,8 @@ pub async fn insert(user: User) -> Result<(), sqlx::Error> {
 }
 
 pub async fn select(user_id: String) -> Result<User, sqlx::Error> {
-    let user = sqlx::query_as!(User, "SELECT user_id, avatar_url FROM user WHERE user_id = ? ")
-        .fetch_all(&*POOL)
+    let user = sqlx::query_as!(UserDto, "SELECT user_id, avatar_url FROM user WHERE user_id = ? ", user_id)
+        .fetch_one(&*POOL)
         .await?;
-    return Ok(user);
+    return Ok(User::new(user.user_id, user.avatar_url));
 }
