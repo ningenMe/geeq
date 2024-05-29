@@ -4,7 +4,7 @@ use axum::{extract::Host, http::Method};
 use axum_extra::extract::CookieJar;
 use domain::auth::Session;
 use generated::{
-    models::{AuthMeGet200Response, Common200Response, Common401Response, Common500Response},
+    models::{AuthMeGet200Response, Common200Response, Common401Response, Common500Response, User},
     AuthLoginPostResponse,
 };
 use infra::{
@@ -29,7 +29,7 @@ impl generated::Api for Api {
         _method: Method,
         _host: Host,
         _cookies: CookieJar,
-        request_body: generated::models::AuthLoginPostRequestBody,
+        request_body: generated::models::AuthLoginPostRequest,
     ) -> Result<generated::AuthLoginPostResponse, String> {
         //oauth認証を行う
         let result = post_login_oauth_access_token(request_body.code).await;
@@ -89,8 +89,10 @@ impl generated::Api for Api {
         };
 
         return Ok(generated::AuthMeGetResponse::Status200(AuthMeGet200Response {
-            user_id: user.get_user_id().to_string(),
-            avatar_url: user.get_avatar_url().to_string(),
+            user: User {
+                user_id: user.get_user_id().to_string(),
+                avatar_url: user.get_avatar_url().to_string(),
+            },
         }));
     }
 

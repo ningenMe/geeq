@@ -83,7 +83,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                        body: models::AuthLoginPostRequestBody,
+                        body: models::AuthLoginPostRequest,
                 ) -> Result<AuthLoginPostResponse, String>;
 
 

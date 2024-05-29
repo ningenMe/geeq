@@ -42,15 +42,15 @@ where
     #[allow(dead_code)]
     struct AuthLoginPostBodyValidator<'a> {
             #[validate]
-          body: &'a models::AuthLoginPostRequestBody,
+          body: &'a models::AuthLoginPostRequest,
     }
 
 
 #[tracing::instrument(skip_all)]
 fn auth_login_post_validation(
-        body: models::AuthLoginPostRequestBody,
+        body: models::AuthLoginPostRequest,
 ) -> std::result::Result<(
-        models::AuthLoginPostRequestBody,
+        models::AuthLoginPostRequest,
 ), ValidationErrors>
 {
               let b = AuthLoginPostBodyValidator { body: &body };
@@ -68,7 +68,7 @@ async fn auth_login_post<I, A>(
   host: Host,
   cookies: CookieJar,
  State(api_impl): State<I>,
-          Json(body): Json<models::AuthLoginPostRequestBody>,
+          Json(body): Json<models::AuthLoginPostRequest>,
 ) -> Result<Response, StatusCode>
 where 
     I: AsRef<A> + Send + Sync,

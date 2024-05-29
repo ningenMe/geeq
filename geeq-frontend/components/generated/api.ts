@@ -26,13 +26,13 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerM
 /**
  * 
  * @export
- * @interface AuthLoginPostRequestBody
+ * @interface AuthLoginPostRequest
  */
-export interface AuthLoginPostRequestBody {
+export interface AuthLoginPostRequest {
     /**
      * 
      * @type {string}
-     * @memberof AuthLoginPostRequestBody
+     * @memberof AuthLoginPostRequest
      */
     'code': string;
 }
@@ -44,10 +44,10 @@ export interface AuthLoginPostRequestBody {
 export interface AuthMeGet200Response {
     /**
      * 
-     * @type {string}
+     * @type {User}
      * @memberof AuthMeGet200Response
      */
-    'userId': string;
+    'user': User;
 }
 /**
  * 
@@ -101,6 +101,25 @@ export interface Common500Response {
      */
     'message': string;
 }
+/**
+ * 
+ * @export
+ * @interface User
+ */
+export interface User {
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
+    'userId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
+    'avatarUrl': string;
+}
 
 /**
  * DefaultApi - axios parameter creator
@@ -110,13 +129,13 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
     return {
         /**
          * 
-         * @param {AuthLoginPostRequestBody} authLoginPostRequestBody 
+         * @param {AuthLoginPostRequest} authLoginPostRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authLoginPost: async (authLoginPostRequestBody: AuthLoginPostRequestBody, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'authLoginPostRequestBody' is not null or undefined
-            assertParamExists('authLoginPost', 'authLoginPostRequestBody', authLoginPostRequestBody)
+        authLoginPost: async (authLoginPostRequest: AuthLoginPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'authLoginPostRequest' is not null or undefined
+            assertParamExists('authLoginPost', 'authLoginPostRequest', authLoginPostRequest)
             const localVarPath = `/auth/login`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -136,7 +155,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(authLoginPostRequestBody, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(authLoginPostRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -213,12 +232,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {AuthLoginPostRequestBody} authLoginPostRequestBody 
+         * @param {AuthLoginPostRequest} authLoginPostRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async authLoginPost(authLoginPostRequestBody: AuthLoginPostRequestBody, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Common200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.authLoginPost(authLoginPostRequestBody, options);
+        async authLoginPost(authLoginPostRequest: AuthLoginPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Common200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authLoginPost(authLoginPostRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.authLoginPost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -257,12 +276,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
     return {
         /**
          * 
-         * @param {AuthLoginPostRequestBody} authLoginPostRequestBody 
+         * @param {AuthLoginPostRequest} authLoginPostRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authLoginPost(authLoginPostRequestBody: AuthLoginPostRequestBody, options?: any): AxiosPromise<Common200Response> {
-            return localVarFp.authLoginPost(authLoginPostRequestBody, options).then((request) => request(axios, basePath));
+        authLoginPost(authLoginPostRequest: AuthLoginPostRequest, options?: any): AxiosPromise<Common200Response> {
+            return localVarFp.authLoginPost(authLoginPostRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -292,13 +311,13 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
 export class DefaultApi extends BaseAPI {
     /**
      * 
-     * @param {AuthLoginPostRequestBody} authLoginPostRequestBody 
+     * @param {AuthLoginPostRequest} authLoginPostRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public authLoginPost(authLoginPostRequestBody: AuthLoginPostRequestBody, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).authLoginPost(authLoginPostRequestBody, options).then((request) => request(this.axios, this.basePath));
+    public authLoginPost(authLoginPostRequest: AuthLoginPostRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).authLoginPost(authLoginPostRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

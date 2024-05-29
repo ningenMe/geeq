@@ -10,7 +10,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthLoginPostRequestBody'
+              properties:
+                code:
+                  type: string
+              required:
+                - code
         required: true
       responses:
         '200':
@@ -67,7 +71,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthMeGet200Response"
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
+                required:
+                  - user                
         '401':
           description: ''
           content:
@@ -83,13 +91,7 @@ paths:
 
 components:
   schemas:
-    AuthLoginPostRequestBody:
-      properties:
-        code:
-          type: string
-      required:
-        - code
-    AuthMeGet200Response:
+    User:
       properties:
         userId:
           type: string

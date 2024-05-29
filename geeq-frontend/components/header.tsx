@@ -14,6 +14,8 @@ import { useEffect, useState } from "react";
 import { GITHUB_CLIENT_ID } from "./constant";
 import { geeqApiClient } from "./client/GeeqApiClient";
 import { useRouter } from "next/navigation";
+import { User } from "./generated";
+import Avatar from "@mui/material/Avatar";
 
 export const Header = () => {
   const productName = "GEEQ";
@@ -21,7 +23,7 @@ export const Header = () => {
   const githubOauthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${redirectUri}`;
   const router = useRouter();
 
-  const [loginUserId, setLoginUserId] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   useEffect(() => {
@@ -30,24 +32,24 @@ export const Header = () => {
         withCredentials: true,
       })
       .then((res) => {
-        setLoginUserId(res.data.userId);
+        setUser(res.data.user);
       })
       .catch(() => {
-        setLoginUserId(null);
+        setUser(null);
       });
-  });
+  }, []);
 
   const settings = [
     {
       name: "マイページ",
-      isDisplayed: !!loginUserId,
+      isDisplayed: !!user,
       onClick: () => {
-        router.push("/user/" + loginUserId);
+        router.push("/user/" + user?.userId);
       },
     },
     {
       name: "GitHubログイン",
-      isDisplayed: !loginUserId,
+      isDisplayed: !user,
       onClick: () => {
         router.push(githubOauthUrl);
       },
@@ -55,7 +57,7 @@ export const Header = () => {
     {
       name: "ログアウト",
       href: "/auth/logout",
-      isDisplayed: !!loginUserId,
+      isDisplayed: !!user,
       onClick: () => {
         router.push("/auth/logout");
       },
@@ -94,10 +96,15 @@ export const Header = () => {
           </Typography>
 
           <Box sx={{ flexGrow: 0 }}>
-            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <PersonIcon fontSize="large" />
-              {loginUserId}
-            </IconButton>
+            {user ? (
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt="user" src={user.avatarUrl} />
+              </IconButton>
+            ) : (
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <PersonIcon fontSize="large" />
+              </IconButton>
+            )}
             <Menu
               sx={{ mt: "45px" }}
               id="menu-appbar"
