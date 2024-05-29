@@ -30,6 +30,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Common401Response"
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Common500Response"
+
   /auth/logout:
     post:
       responses:
@@ -45,6 +52,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Common401Response"
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Common500Response"
+
   /auth/me:
     get:
       responses:
@@ -60,6 +74,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Common401Response"
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Common500Response"
 
 components:
   schemas:
@@ -73,8 +93,11 @@ components:
       properties:
         userId:
           type: string
+        avatarUrl:
+          type: string
       required:
         - userId
+        - avatarUrl
     Common200Response:
       properties:
         message:

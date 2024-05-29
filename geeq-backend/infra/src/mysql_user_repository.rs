@@ -34,7 +34,7 @@ struct UserDto {
     pub avatar_url: String,
 }
 
-pub async fn insert(user: User) -> Result<(), sqlx::Error> {
+pub async fn insert(user: &User) -> Result<(), sqlx::Error> {
     sqlx::query!(
         "INSERT INTO user (user_id, avatar_url)
          VALUES (?, ?) AS new ON DUPLICATE KEY UPDATE avatar_url = new.avatar_url ",

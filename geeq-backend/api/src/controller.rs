@@ -4,11 +4,12 @@ use axum::{extract::Host, http::Method};
 use axum_extra::extract::CookieJar;
 use domain::auth::Session;
 use generated::{
-    models::{AuthMeGet200Response, Common200Response, Common401Response},
+    models::{AuthMeGet200Response, Common200Response, Common401Response, Common500Response},
     AuthLoginPostResponse,
 };
 use infra::{
     github_adapter::{get_user, post_login_oauth_access_token},
+    mysql_user_repository::{self},
     redis_repository,
 };
 
@@ -38,17 +39,21 @@ impl generated::Api for Api {
             }));
         }
         //access_tokenを使ってユーザー情報を取得
-        let user = get_user(result.unwrap().access_token).await;
-        if user.is_err() {
+        let result = get_user(result.unwrap().access_token).await;
+        if result.is_err() {
             return Ok(generated::AuthLoginPostResponse::Status401(Common401Response {
                 message: "Unauthorized".to_string(),
             }));
         }
-        //TODO ユーザー情報をmysqlに保存
+        let user = result.unwrap();
+
+        if let Err(err) = mysql_user_repository::insert(&user).await {
+            return Ok(generated::AuthLoginPostResponse::Status500(Common500Response { message: err.to_string() }));
+        };
 
         //ユーザー情報を使ってsession_idを生成した後、redisに保存
         let session = Session::new();
-        redis_repository::set_session(&session, user.unwrap().get_user_id());
+        redis_repository::set_session(&session, user.get_user_id());
 
         let cookie = session.get_geeq_session_cookie();
 
@@ -74,7 +79,19 @@ impl generated::Api for Api {
                 message: "Unauthenticated".to_string(),
             }));
         }
-        return Ok(generated::AuthMeGetResponse::Status200(AuthMeGet200Response { user_id: user_id.unwrap() }));
+        let user = match mysql_user_repository::select(user_id.unwrap()).await {
+            Ok(user) => user,
+            Err(_) => {
+                return Ok(generated::AuthMeGetResponse::Status500(Common500Response {
+                    message: "Internal Server Error".to_string(),
+                }));
+            }
+        };
+
+        return Ok(generated::AuthMeGetResponse::Status200(AuthMeGet200Response {
+            user_id: user.get_user_id().to_string(),
+            avatar_url: user.get_avatar_url().to_string(),
+        }));
     }
 
     async fn auth_logout_post(&self, _method: Method, _host: Host, cookies: CookieJar) -> Result<generated::AuthLogoutPostResponse, String> {
