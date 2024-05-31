@@ -9,7 +9,6 @@ import Menu from "@mui/material/Menu";
 import Container from "@mui/material/Container";
 import PersonIcon from "@mui/icons-material/Person";
 import MenuItem from "@mui/material/MenuItem";
-import CodeIcon from "@mui/icons-material/Code";
 import { useEffect, useState } from "react";
 import { GITHUB_CLIENT_ID } from "./constant";
 import { geeqApiClient } from "./client/GeeqApiClient";
@@ -72,21 +71,25 @@ export const Header = () => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar
+      position="static"
+      style={{
+        background: "linear-gradient(#00FF3B, #FFD700)",
+        color: "#000000",
+      }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <CodeIcon sx={{ display: { xs: "flex", md: "flex" }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
             component="a"
             href="/"
+            fontFamily={"inherit"}
             sx={{
               mr: 2,
               display: { xs: "flex", md: "flex" },
               flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
               letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
