@@ -1,4 +1,4 @@
-import { Header } from "../components/header";
+import { Header } from "../components/common/header";
 
 export default async function Template({
   children,

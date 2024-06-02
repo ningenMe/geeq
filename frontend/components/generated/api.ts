@@ -104,6 +104,62 @@ export interface Common500Response {
 /**
  * 
  * @export
+ * @interface Task
+ */
+export interface Task {
+    /**
+     * 
+     * @type {string}
+     * @memberof Task
+     */
+    'taskId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Task
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Task
+     */
+    'description': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Task
+     */
+    'createdAt': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Task
+     */
+    'updatedAt': string;
+    /**
+     * userId
+     * @type {string}
+     * @memberof Task
+     */
+    'createdBy': string;
+}
+/**
+ * 
+ * @export
+ * @interface TaskGet200Response
+ */
+export interface TaskGet200Response {
+    /**
+     * 
+     * @type {Array<Task>}
+     * @memberof TaskGet200Response
+     */
+    'tasks': Array<Task>;
+}
+/**
+ * 
+ * @export
  * @interface User
  */
 export interface User {
@@ -220,6 +276,35 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        taskGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/task`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -264,6 +349,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.authMeGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async taskGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskGet200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.taskGet(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.taskGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -298,6 +394,14 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         authMeGet(options?: any): AxiosPromise<AuthMeGet200Response> {
             return localVarFp.authMeGet(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        taskGet(options?: any): AxiosPromise<TaskGet200Response> {
+            return localVarFp.taskGet(options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -338,6 +442,16 @@ export class DefaultApi extends BaseAPI {
      */
     public authMeGet(options?: RawAxiosRequestConfig) {
         return DefaultApiFp(this.configuration).authMeGet(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public taskGet(options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).taskGet(options).then((request) => request(this.axios, this.basePath));
     }
 }
 

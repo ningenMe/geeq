@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { Zen_Kaku_Gothic_New } from "next/font/google";
-import { GoogleAnalytics } from "../components/googleanalytics";
+import { GoogleAnalytics } from "../components/common/googleanalytics";
 
 export const metadata: Metadata = {
   title: "geeq",

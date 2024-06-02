@@ -11,10 +11,10 @@ import PersonIcon from "@mui/icons-material/Person";
 import MenuItem from "@mui/material/MenuItem";
 import { useEffect, useState } from "react";
 import { GITHUB_CLIENT_ID } from "./constant";
-import { geeqApiClient } from "./client/GeeqApiClient";
 import { useRouter } from "next/navigation";
-import { User } from "./generated";
 import Avatar from "@mui/material/Avatar";
+import { geeqApiClient } from "../client/GeeqApiClient";
+import { User } from "../generated";
 
 export const Header = () => {
   const productName = "GEEQ";
