@@ -2,7 +2,7 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import Script from "next/script";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 
 export const GA_TAG_ID = process.env.NEXT_PUBLIC_GA_ID as string;
 
@@ -12,7 +12,7 @@ export const pageview = (path: string) => {
   });
 };
 
-const GoogleAnalytics = () => {
+const InnerGoogleAnalytics = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -44,4 +44,10 @@ const GoogleAnalytics = () => {
   );
 };
 
-export default GoogleAnalytics;
+export const GoogleAnalytics = () => {
+  return (
+    <Suspense>
+      <InnerGoogleAnalytics />
+    </Suspense>
+  );
+};
