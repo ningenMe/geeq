@@ -1,0 +1,9 @@
+    User:
+      properties:
+        userId:
+          type: string
+        avatarUrl:
+          type: string
+      required:
+        - userId
+        - avatarUrl

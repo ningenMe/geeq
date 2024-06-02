@@ -1,0 +1,24 @@
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                properties:
+                  user:
+                    $ref: "./components/user.yaml#/User"
+                required:
+                  - user                
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common401Response"
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common500Response"

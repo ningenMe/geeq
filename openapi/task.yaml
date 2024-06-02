@@ -1,0 +1,26 @@
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                properties:
+                  tasks:
+                    type: array
+                    items:
+                      $ref: "./components/task.yaml#/Task"
+                required:
+                  - tasks
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common401Response"
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common500Response"

@@ -1,0 +1,24 @@
+    Common200Response:
+      properties:
+        message:
+          type: string
+      required:
+        - message
+    Common401Response:
+      properties:
+        message:
+          type: string
+      required:
+        - message
+    Common403Response:
+      properties:
+        message:
+          type: string
+      required:
+        - message
+    Common500Response:
+      properties:
+        message:
+          type: string
+      required:
+        - message

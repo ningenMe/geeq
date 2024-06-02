@@ -1,0 +1,36 @@
+    post:
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              properties:
+                code:
+                  type: string
+              required:
+                - code
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common200Response"
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: geeq-session-id=abcde12345; Path=/; HttpOnly
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common401Response"
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common500Response"

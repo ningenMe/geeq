@@ -1,0 +1,20 @@
+    post:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common200Response"
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common401Response"
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common500Response"
