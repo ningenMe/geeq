@@ -2,9 +2,10 @@ use async_trait::async_trait;
 use axum::{extract::Host, http::Method};
 
 use axum_extra::extract::CookieJar;
+use chrono::TimeZone;
 use domain::auth::Session;
 use generated::{
-    models::{AuthMeGet200Response, Common200Response, Common401Response, Common500Response, User},
+    models::{AuthMeGet200Response, Common200Response, Common401Response, Common500Response, TaskGet200Response, User},
     AuthLoginPostResponse,
 };
 use infra::{
@@ -108,5 +109,29 @@ impl generated::Api for Api {
 
         redis_repository::delete_session(&session);
         return Ok(generated::AuthLogoutPostResponse::Status200(Common200Response { message: "ok".to_string() }));
+    }
+
+    async fn task_get(&self, _method: Method, _host: Host, _cookies: CookieJar) -> Result<generated::TaskGetResponse, String> {
+        let tasks = match infra::mysql_task_repository::select().await {
+            Ok(tasks) => tasks,
+            Err(_) => {
+                return Ok(generated::TaskGetResponse::Status500(Common500Response {
+                    message: "Internal Server Error".to_string(),
+                }));
+            }
+        };
+        return Ok(generated::TaskGetResponse::Status200(TaskGet200Response {
+            tasks: tasks
+                .into_iter()
+                .map(|task| generated::models::Task {
+                    task_id: task.get_task_id().to_string(),
+                    title: task.get_title().to_string(),
+                    description: task.get_description().to_string(),
+                    created_at: chrono::offset::Utc.from_utc_datetime(&task.get_created_at()),
+                    updated_at: chrono::offset::Utc.from_utc_datetime(&task.get_updated_at()),
+                    created_by: task.get_created_by().to_string(),
+                })
+                .collect(),
+        }));
     }
 }

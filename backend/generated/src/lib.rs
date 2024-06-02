@@ -71,6 +71,23 @@ pub enum AuthMeGetResponse {
     (models::Common500Response)
 }
 
+        #[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[must_use]
+#[allow(clippy::large_enum_variant)]
+pub enum TaskGetResponse {
+
+    Status200
+    (models::TaskGet200Response)
+    ,
+
+    Status401
+    (models::Common401Response)
+    ,
+
+    Status500
+    (models::Common500Response)
+}
+
 
 /// API
 #[async_trait]
@@ -103,6 +120,15 @@ pub trait Api {
                 host: Host,
                 cookies: CookieJar,
                 ) -> Result<AuthMeGetResponse, String>;
+
+
+                /// TaskGet - GET /task
+                async fn task_get(
+                &self,
+                method: Method,
+                host: Host,
+                cookies: CookieJar,
+                ) -> Result<TaskGetResponse, String>;
 
 }
 
