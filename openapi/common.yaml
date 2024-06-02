@@ -4,6 +4,12 @@
           type: string
       required:
         - message
+    Common400Response:
+      properties:
+        message:
+          type: string
+      required:
+        - message
     Common401Response:
       properties:
         message:

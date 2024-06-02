@@ -1,0 +1,30 @@
+    get:
+      parameters:
+        - in: path
+          name: taskId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                properties:
+                  task:
+                    $ref: "./components/task.yaml#/Task"
+                required:
+                  - task
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common400Response"
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common500Response"

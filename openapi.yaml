@@ -11,3 +11,5 @@ paths:
     $ref: "./openapi/auth-me.yaml"
   /task:
     $ref: "./openapi/task.yaml"
+  /task/{taskId}:
+    $ref: "./openapi/task-taskid.yaml"
