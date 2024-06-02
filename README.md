@@ -3,7 +3,7 @@
 ## openapi generate
 ```shell
 openapi-generator generate -i ./openapi.yaml -g typescript-axios -o ./frontend/components/generated
-openapi-generator generate -i ./openapi.yaml -g rust-axum -p packageName=generated -o ./geeq-backend/generated
+openapi-generator generate -i ./openapi.yaml -g rust-axum -p packageName=generated -o ./backend/generated
 ```
 
 ## sqlx prepare
