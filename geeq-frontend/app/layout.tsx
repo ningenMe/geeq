@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { Zen_Kaku_Gothic_New } from "next/font/google";
+import GoogleAnalytics from "../components/googleanalytics";
 
 export const metadata: Metadata = {
   title: "geeq",
@@ -24,6 +25,9 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="ja" style={style}>
+      <head>
+        <GoogleAnalytics />
+      </head>
       <body>{children}</body>
     </html>
   );
