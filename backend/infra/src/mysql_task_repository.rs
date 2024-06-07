@@ -22,11 +22,11 @@ pub async fn select_one(task_id: &str) -> Result<Task, sqlx::Error> {
     .fetch_one(&*POOL)
     .await?;
     return Ok(Task::new(
-        task.task_id,
+        Some(task.task_id),
         task.title,
         task.description,
-        task.created_at,
-        task.updated_at,
+        Some(task.created_at),
+        Some(task.updated_at),
         task.created_by,
     ));
 }
@@ -37,6 +37,28 @@ pub async fn select_all() -> Result<Vec<Task>, sqlx::Error> {
         .await?;
     return Ok(tasks
         .into_iter()
-        .map(|task| Task::new(task.task_id, task.title, task.description, task.created_at, task.updated_at, task.created_by))
+        .map(|task| {
+            Task::new(
+                Some(task.task_id),
+                task.title,
+                task.description,
+                Some(task.created_at),
+                Some(task.updated_at),
+                task.created_by,
+            )
+        })
         .collect());
+}
+
+pub async fn insert_one(task: &Task) -> Result<(), sqlx::Error> {
+    sqlx::query!(
+        "INSERT INTO task (task_id, title, description, created_by) VALUES (?, ?, ?, ?)",
+        task.get_task_id(),
+        task.get_title(),
+        task.get_description(),
+        task.get_created_by()
+    )
+    .execute(&*POOL)
+    .await?;
+    Ok(())
 }

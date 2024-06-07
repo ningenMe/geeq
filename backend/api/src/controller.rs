@@ -55,6 +55,6 @@ impl generated::Api for Api {
         cookies: CookieJar,
         body: generated::models::TaskCommand,
     ) -> Result<generated::TaskPostResponse, String> {
-        todo!()
+        return usecase::task_post::exec(cookies, body).await;
     }
 }
