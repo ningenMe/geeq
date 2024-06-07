@@ -17,6 +17,7 @@ use crate::{Api,
      AuthLogoutPostResponse,
      AuthMeGetResponse,
      TaskGetResponse,
+     TaskPostResponse,
      TaskTaskIdGetResponse
 };
 
@@ -38,7 +39,7 @@ where
             get(auth_me_get::<I, A>)
         )
         .route("/task",
-            get(task_get::<I, A>)
+            get(task_get::<I, A>).post(task_post::<I, A>)
         )
         .route("/task/:task_id",
             get(task_task_id_get::<I, A>)
@@ -519,6 +520,157 @@ where
                                                   response.body(Body::from(body_content))
                                                 },
                                                 TaskGetResponse::Status500
+                                                    (body)
+                                                => {
+
+                                                  let mut response = response.status(500);
+                                                  {
+                                                    let mut response_headers = response.headers_mut().unwrap();
+                                                    response_headers.insert(
+                                                        CONTENT_TYPE,
+                                                        HeaderValue::from_str("application/json").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
+                                                  }
+
+                                                  let body_content =  tokio::task::spawn_blocking(move ||
+                                                      serde_json::to_vec(&body).map_err(|e| {
+                                                        error!(error = ?e);
+                                                        StatusCode::INTERNAL_SERVER_ERROR
+                                                      })).await.unwrap()?;
+                                                  response.body(Body::from(body_content))
+                                                },
+                                            },
+                                            Err(_) => {
+                                                // Application code returned an error. This should not happen, as the implementation should
+                                                // return a valid response.
+                                                response.status(500).body(Body::empty())
+                                            },
+                                        };
+
+                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+}
+
+    #[derive(validator::Validate)]
+    #[allow(dead_code)]
+    struct TaskPostBodyValidator<'a> {
+            #[validate]
+          body: &'a models::TaskCommand,
+    }
+
+
+#[tracing::instrument(skip_all)]
+fn task_post_validation(
+        body: models::TaskCommand,
+) -> std::result::Result<(
+        models::TaskCommand,
+), ValidationErrors>
+{
+              let b = TaskPostBodyValidator { body: &body };
+              b.validate()?;
+
+Ok((
+    body,
+))
+}
+
+/// TaskPost - POST /task
+#[tracing::instrument(skip_all)]
+async fn task_post<I, A>(
+  method: Method,
+  host: Host,
+  cookies: CookieJar,
+ State(api_impl): State<I>,
+          Json(body): Json<models::TaskCommand>,
+) -> Result<Response, StatusCode>
+where 
+    I: AsRef<A> + Send + Sync,
+    A: Api,
+{
+
+      #[allow(clippy::redundant_closure)]
+      let validation = tokio::task::spawn_blocking(move || 
+    task_post_validation(
+          body,
+    )
+  ).await.unwrap();
+
+  let Ok((
+      body,
+  )) = validation else {
+    return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(validation.unwrap_err().to_string()))
+            .map_err(|_| StatusCode::BAD_REQUEST); 
+  };
+
+  let result = api_impl.as_ref().task_post(
+      method,
+      host,
+      cookies,
+              body,
+  ).await;
+
+  let mut response = Response::builder();
+
+  let resp = match result {
+                                            Ok(rsp) => match rsp {
+                                                TaskPostResponse::Status200
+                                                    (body)
+                                                => {
+
+                                                  let mut response = response.status(200);
+                                                  {
+                                                    let mut response_headers = response.headers_mut().unwrap();
+                                                    response_headers.insert(
+                                                        CONTENT_TYPE,
+                                                        HeaderValue::from_str("application/json").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
+                                                  }
+
+                                                  let body_content =  tokio::task::spawn_blocking(move ||
+                                                      serde_json::to_vec(&body).map_err(|e| {
+                                                        error!(error = ?e);
+                                                        StatusCode::INTERNAL_SERVER_ERROR
+                                                      })).await.unwrap()?;
+                                                  response.body(Body::from(body_content))
+                                                },
+                                                TaskPostResponse::Status401
+                                                    (body)
+                                                => {
+
+                                                  let mut response = response.status(401);
+                                                  {
+                                                    let mut response_headers = response.headers_mut().unwrap();
+                                                    response_headers.insert(
+                                                        CONTENT_TYPE,
+                                                        HeaderValue::from_str("application/json").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
+                                                  }
+
+                                                  let body_content =  tokio::task::spawn_blocking(move ||
+                                                      serde_json::to_vec(&body).map_err(|e| {
+                                                        error!(error = ?e);
+                                                        StatusCode::INTERNAL_SERVER_ERROR
+                                                      })).await.unwrap()?;
+                                                  response.body(Body::from(body_content))
+                                                },
+                                                TaskPostResponse::Status403
+                                                    (body)
+                                                => {
+
+                                                  let mut response = response.status(403);
+                                                  {
+                                                    let mut response_headers = response.headers_mut().unwrap();
+                                                    response_headers.insert(
+                                                        CONTENT_TYPE,
+                                                        HeaderValue::from_str("application/json").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
+                                                  }
+
+                                                  let body_content =  tokio::task::spawn_blocking(move ||
+                                                      serde_json::to_vec(&body).map_err(|e| {
+                                                        error!(error = ?e);
+                                                        StatusCode::INTERNAL_SERVER_ERROR
+                                                      })).await.unwrap()?;
+                                                  response.body(Body::from(body_content))
+                                                },
+                                                TaskPostResponse::Status500
                                                     (body)
                                                 => {
 

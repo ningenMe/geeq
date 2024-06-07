@@ -9,7 +9,7 @@
                   tasks:
                     type: array
                     items:
-                      $ref: "./components/task.yaml#/Task"
+                      $ref: "./components/task.yaml#/TaskQuery"
                 required:
                   - tasks
         '401':
@@ -18,6 +18,39 @@
             application/json:
               schema:
                 $ref: "./common.yaml#/Common401Response"
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common500Response"
+    post:
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: "./components/task.yaml#/TaskCommand"
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common200Response"
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common401Response"
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common403Response"
         '500':
           description: ''
           content:

@@ -8,7 +8,7 @@ use infra::github_adapter;
 use infra::mysql_user_repository;
 use infra::redis_repository;
 
-pub async fn auth_login_post(request_body: generated::models::AuthLoginPostRequest) -> Result<generated::AuthLoginPostResponse, String> {
+pub async fn exec(request_body: generated::models::AuthLoginPostRequest) -> Result<generated::AuthLoginPostResponse, String> {
     //oauth認証を行う
     let result = github_adapter::post_login_oauth_access_token(request_body.code).await;
     if result.is_err() {

@@ -91,6 +91,27 @@ pub enum TaskGetResponse {
         #[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[must_use]
 #[allow(clippy::large_enum_variant)]
+pub enum TaskPostResponse {
+
+    Status200
+    (models::Common200Response)
+    ,
+
+    Status401
+    (models::Common401Response)
+    ,
+
+    Status403
+    (models::Common403Response)
+    ,
+
+    Status500
+    (models::Common500Response)
+}
+
+        #[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[must_use]
+#[allow(clippy::large_enum_variant)]
 pub enum TaskTaskIdGetResponse {
 
     Status200
@@ -146,6 +167,16 @@ pub trait Api {
                 host: Host,
                 cookies: CookieJar,
                 ) -> Result<TaskGetResponse, String>;
+
+
+                /// TaskPost - POST /task
+                async fn task_post(
+                &self,
+                method: Method,
+                host: Host,
+                cookies: CookieJar,
+                        body: models::TaskCommand,
+                ) -> Result<TaskPostResponse, String>;
 
 
                 /// TaskTaskIdGet - GET /task/{taskId}

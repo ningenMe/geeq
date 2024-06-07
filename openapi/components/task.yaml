@@ -1,4 +1,4 @@
-    Task:
+    TaskQuery:
       properties:
         taskId:
           type: string
@@ -22,3 +22,14 @@
         - createdAt
         - updatedAt
         - createdBy
+    TaskCommand:
+      properties:
+        taskId:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+      required:
+        - title
+        - description

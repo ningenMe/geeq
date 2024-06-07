@@ -12,6 +12,7 @@ use crate::{models, types::*};
       
       
       
+      
     #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
     #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
     pub struct TaskTaskIdGetPathParams {
@@ -644,6 +645,130 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<Common401Res
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
+pub struct Common403Response {
+    #[serde(rename = "message")]
+    pub message: String,
+
+}
+
+
+impl Common403Response {
+    #[allow(clippy::new_without_default, clippy::too_many_arguments)]
+    pub fn new(message: String, ) -> Common403Response {
+        Common403Response {
+            message,
+        }
+    }
+}
+
+/// Converts the Common403Response value to the Query Parameters representation (style=form, explode=false)
+/// specified in https://swagger.io/docs/specification/serialization/
+/// Should be implemented in a serde serializer
+impl std::string::ToString for Common403Response {
+    fn to_string(&self) -> String {
+        let params: Vec<Option<String>> = vec![
+
+            Some("message".to_string()),
+            Some(self.message.to_string()),
+
+        ];
+
+        params.into_iter().flatten().collect::<Vec<_>>().join(",")
+    }
+}
+
+/// Converts Query Parameters representation (style=form, explode=false) to a Common403Response value
+/// as specified in https://swagger.io/docs/specification/serialization/
+/// Should be implemented in a serde deserializer
+impl std::str::FromStr for Common403Response {
+    type Err = String;
+
+    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+        /// An intermediate representation of the struct to use for parsing.
+        #[derive(Default)]
+        #[allow(dead_code)]
+        struct IntermediateRep {
+            pub message: Vec<String>,
+        }
+
+        let mut intermediate_rep = IntermediateRep::default();
+
+        // Parse into intermediate representation
+        let mut string_iter = s.split(',');
+        let mut key_result = string_iter.next();
+
+        while key_result.is_some() {
+            let val = match string_iter.next() {
+                Some(x) => x,
+                None => return std::result::Result::Err("Missing value while parsing Common403Response".to_string())
+            };
+
+            if let Some(key) = key_result {
+                #[allow(clippy::match_single_binding)]
+                match key {
+                    #[allow(clippy::redundant_clone)]
+                    "message" => intermediate_rep.message.push(<String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                    _ => return std::result::Result::Err("Unexpected key while parsing Common403Response".to_string())
+                }
+            }
+
+            // Get the next key
+            key_result = string_iter.next();
+        }
+
+        // Use the intermediate representation to return the struct
+        std::result::Result::Ok(Common403Response {
+            message: intermediate_rep.message.into_iter().next().ok_or_else(|| "message missing in Common403Response".to_string())?,
+        })
+    }
+}
+
+// Methods for converting between header::IntoHeaderValue<Common403Response> and HeaderValue
+
+#[cfg(feature = "server")]
+impl std::convert::TryFrom<header::IntoHeaderValue<Common403Response>> for HeaderValue {
+    type Error = String;
+
+    fn try_from(hdr_value: header::IntoHeaderValue<Common403Response>) -> std::result::Result<Self, Self::Error> {
+        let hdr_value = hdr_value.to_string();
+        match HeaderValue::from_str(&hdr_value) {
+             std::result::Result::Ok(value) => std::result::Result::Ok(value),
+             std::result::Result::Err(e) => std::result::Result::Err(
+                 format!("Invalid header value for Common403Response - value: {} is invalid {}",
+                     hdr_value, e))
+        }
+    }
+}
+
+#[cfg(feature = "server")]
+impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<Common403Response> {
+    type Error = String;
+
+    fn try_from(hdr_value: HeaderValue) -> std::result::Result<Self, Self::Error> {
+        match hdr_value.to_str() {
+             std::result::Result::Ok(value) => {
+                    match <Common403Response as std::str::FromStr>::from_str(value) {
+                        std::result::Result::Ok(value) => std::result::Result::Ok(header::IntoHeaderValue(value)),
+                        std::result::Result::Err(err) => std::result::Result::Err(
+                            format!("Unable to convert header value '{}' into Common403Response - {}",
+                                value, err))
+                    }
+             },
+             std::result::Result::Err(e) => std::result::Result::Err(
+                 format!("Unable to convert header: {:?} to string: {}",
+                     hdr_value, e))
+        }
+    }
+}
+
+
+
+
+
+
+
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+#[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
 pub struct Common500Response {
     #[serde(rename = "message")]
     pub message: String,
@@ -768,9 +893,10 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<Common500Res
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
-pub struct Task {
+pub struct TaskCommand {
     #[serde(rename = "taskId")]
-    pub task_id: String,
+    #[serde(skip_serializing_if="Option::is_none")]
+    pub task_id: Option<String>,
 
     #[serde(rename = "title")]
     pub title: String,
@@ -778,42 +904,33 @@ pub struct Task {
     #[serde(rename = "description")]
     pub description: String,
 
-    #[serde(rename = "createdAt")]
-    pub created_at: chrono::DateTime::<chrono::Utc>,
-
-    #[serde(rename = "updatedAt")]
-    pub updated_at: chrono::DateTime::<chrono::Utc>,
-
-/// userId
-    #[serde(rename = "createdBy")]
-    pub created_by: String,
-
 }
 
 
-impl Task {
+impl TaskCommand {
     #[allow(clippy::new_without_default, clippy::too_many_arguments)]
-    pub fn new(task_id: String, title: String, description: String, created_at: chrono::DateTime::<chrono::Utc>, updated_at: chrono::DateTime::<chrono::Utc>, created_by: String, ) -> Task {
-        Task {
-            task_id,
+    pub fn new(title: String, description: String, ) -> TaskCommand {
+        TaskCommand {
+            task_id: None,
             title,
             description,
-            created_at,
-            updated_at,
-            created_by,
         }
     }
 }
 
-/// Converts the Task value to the Query Parameters representation (style=form, explode=false)
+/// Converts the TaskCommand value to the Query Parameters representation (style=form, explode=false)
 /// specified in https://swagger.io/docs/specification/serialization/
 /// Should be implemented in a serde serializer
-impl std::string::ToString for Task {
+impl std::string::ToString for TaskCommand {
     fn to_string(&self) -> String {
         let params: Vec<Option<String>> = vec![
 
-            Some("taskId".to_string()),
-            Some(self.task_id.to_string()),
+            self.task_id.as_ref().map(|task_id| {
+                [
+                    "taskId".to_string(),
+                    task_id.to_string(),
+                ].join(",")
+            }),
 
 
             Some("title".to_string()),
@@ -823,24 +940,16 @@ impl std::string::ToString for Task {
             Some("description".to_string()),
             Some(self.description.to_string()),
 
-            // Skipping createdAt in query parameter serialization
-
-            // Skipping updatedAt in query parameter serialization
-
-
-            Some("createdBy".to_string()),
-            Some(self.created_by.to_string()),
-
         ];
 
         params.into_iter().flatten().collect::<Vec<_>>().join(",")
     }
 }
 
-/// Converts Query Parameters representation (style=form, explode=false) to a Task value
+/// Converts Query Parameters representation (style=form, explode=false) to a TaskCommand value
 /// as specified in https://swagger.io/docs/specification/serialization/
 /// Should be implemented in a serde deserializer
-impl std::str::FromStr for Task {
+impl std::str::FromStr for TaskCommand {
     type Err = String;
 
     fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
@@ -851,9 +960,6 @@ impl std::str::FromStr for Task {
             pub task_id: Vec<String>,
             pub title: Vec<String>,
             pub description: Vec<String>,
-            pub created_at: Vec<chrono::DateTime::<chrono::Utc>>,
-            pub updated_at: Vec<chrono::DateTime::<chrono::Utc>>,
-            pub created_by: Vec<String>,
         }
 
         let mut intermediate_rep = IntermediateRep::default();
@@ -865,7 +971,7 @@ impl std::str::FromStr for Task {
         while key_result.is_some() {
             let val = match string_iter.next() {
                 Some(x) => x,
-                None => return std::result::Result::Err("Missing value while parsing Task".to_string())
+                None => return std::result::Result::Err("Missing value while parsing TaskCommand".to_string())
             };
 
             if let Some(key) = key_result {
@@ -877,13 +983,7 @@ impl std::str::FromStr for Task {
                     "title" => intermediate_rep.title.push(<String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
                     #[allow(clippy::redundant_clone)]
                     "description" => intermediate_rep.description.push(<String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    #[allow(clippy::redundant_clone)]
-                    "createdAt" => intermediate_rep.created_at.push(<chrono::DateTime::<chrono::Utc> as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    #[allow(clippy::redundant_clone)]
-                    "updatedAt" => intermediate_rep.updated_at.push(<chrono::DateTime::<chrono::Utc> as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    #[allow(clippy::redundant_clone)]
-                    "createdBy" => intermediate_rep.created_by.push(<String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    _ => return std::result::Result::Err("Unexpected key while parsing Task".to_string())
+                    _ => return std::result::Result::Err("Unexpected key while parsing TaskCommand".to_string())
                 }
             }
 
@@ -892,45 +992,42 @@ impl std::str::FromStr for Task {
         }
 
         // Use the intermediate representation to return the struct
-        std::result::Result::Ok(Task {
-            task_id: intermediate_rep.task_id.into_iter().next().ok_or_else(|| "taskId missing in Task".to_string())?,
-            title: intermediate_rep.title.into_iter().next().ok_or_else(|| "title missing in Task".to_string())?,
-            description: intermediate_rep.description.into_iter().next().ok_or_else(|| "description missing in Task".to_string())?,
-            created_at: intermediate_rep.created_at.into_iter().next().ok_or_else(|| "createdAt missing in Task".to_string())?,
-            updated_at: intermediate_rep.updated_at.into_iter().next().ok_or_else(|| "updatedAt missing in Task".to_string())?,
-            created_by: intermediate_rep.created_by.into_iter().next().ok_or_else(|| "createdBy missing in Task".to_string())?,
+        std::result::Result::Ok(TaskCommand {
+            task_id: intermediate_rep.task_id.into_iter().next(),
+            title: intermediate_rep.title.into_iter().next().ok_or_else(|| "title missing in TaskCommand".to_string())?,
+            description: intermediate_rep.description.into_iter().next().ok_or_else(|| "description missing in TaskCommand".to_string())?,
         })
     }
 }
 
-// Methods for converting between header::IntoHeaderValue<Task> and HeaderValue
+// Methods for converting between header::IntoHeaderValue<TaskCommand> and HeaderValue
 
 #[cfg(feature = "server")]
-impl std::convert::TryFrom<header::IntoHeaderValue<Task>> for HeaderValue {
+impl std::convert::TryFrom<header::IntoHeaderValue<TaskCommand>> for HeaderValue {
     type Error = String;
 
-    fn try_from(hdr_value: header::IntoHeaderValue<Task>) -> std::result::Result<Self, Self::Error> {
+    fn try_from(hdr_value: header::IntoHeaderValue<TaskCommand>) -> std::result::Result<Self, Self::Error> {
         let hdr_value = hdr_value.to_string();
         match HeaderValue::from_str(&hdr_value) {
              std::result::Result::Ok(value) => std::result::Result::Ok(value),
              std::result::Result::Err(e) => std::result::Result::Err(
-                 format!("Invalid header value for Task - value: {} is invalid {}",
+                 format!("Invalid header value for TaskCommand - value: {} is invalid {}",
                      hdr_value, e))
         }
     }
 }
 
 #[cfg(feature = "server")]
-impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<Task> {
+impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<TaskCommand> {
     type Error = String;
 
     fn try_from(hdr_value: HeaderValue) -> std::result::Result<Self, Self::Error> {
         match hdr_value.to_str() {
              std::result::Result::Ok(value) => {
-                    match <Task as std::str::FromStr>::from_str(value) {
+                    match <TaskCommand as std::str::FromStr>::from_str(value) {
                         std::result::Result::Ok(value) => std::result::Result::Ok(header::IntoHeaderValue(value)),
                         std::result::Result::Err(err) => std::result::Result::Err(
-                            format!("Unable to convert header value '{}' into Task - {}",
+                            format!("Unable to convert header value '{}' into TaskCommand - {}",
                                 value, err))
                     }
              },
@@ -951,14 +1048,14 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<Task> {
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
 pub struct TaskGet200Response {
     #[serde(rename = "tasks")]
-    pub tasks: Vec<models::Task>,
+    pub tasks: Vec<models::TaskQuery>,
 
 }
 
 
 impl TaskGet200Response {
     #[allow(clippy::new_without_default, clippy::too_many_arguments)]
-    pub fn new(tasks: Vec<models::Task>, ) -> TaskGet200Response {
+    pub fn new(tasks: Vec<models::TaskQuery>, ) -> TaskGet200Response {
         TaskGet200Response {
             tasks,
         }
@@ -990,7 +1087,7 @@ impl std::str::FromStr for TaskGet200Response {
         #[derive(Default)]
         #[allow(dead_code)]
         struct IntermediateRep {
-            pub tasks: Vec<Vec<models::Task>>,
+            pub tasks: Vec<Vec<models::TaskQuery>>,
         }
 
         let mut intermediate_rep = IntermediateRep::default();
@@ -1070,16 +1167,197 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<TaskGet200Re
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
+pub struct TaskQuery {
+    #[serde(rename = "taskId")]
+    pub task_id: String,
+
+    #[serde(rename = "title")]
+    pub title: String,
+
+    #[serde(rename = "description")]
+    pub description: String,
+
+    #[serde(rename = "createdAt")]
+    pub created_at: chrono::DateTime::<chrono::Utc>,
+
+    #[serde(rename = "updatedAt")]
+    pub updated_at: chrono::DateTime::<chrono::Utc>,
+
+/// userId
+    #[serde(rename = "createdBy")]
+    pub created_by: String,
+
+}
+
+
+impl TaskQuery {
+    #[allow(clippy::new_without_default, clippy::too_many_arguments)]
+    pub fn new(task_id: String, title: String, description: String, created_at: chrono::DateTime::<chrono::Utc>, updated_at: chrono::DateTime::<chrono::Utc>, created_by: String, ) -> TaskQuery {
+        TaskQuery {
+            task_id,
+            title,
+            description,
+            created_at,
+            updated_at,
+            created_by,
+        }
+    }
+}
+
+/// Converts the TaskQuery value to the Query Parameters representation (style=form, explode=false)
+/// specified in https://swagger.io/docs/specification/serialization/
+/// Should be implemented in a serde serializer
+impl std::string::ToString for TaskQuery {
+    fn to_string(&self) -> String {
+        let params: Vec<Option<String>> = vec![
+
+            Some("taskId".to_string()),
+            Some(self.task_id.to_string()),
+
+
+            Some("title".to_string()),
+            Some(self.title.to_string()),
+
+
+            Some("description".to_string()),
+            Some(self.description.to_string()),
+
+            // Skipping createdAt in query parameter serialization
+
+            // Skipping updatedAt in query parameter serialization
+
+
+            Some("createdBy".to_string()),
+            Some(self.created_by.to_string()),
+
+        ];
+
+        params.into_iter().flatten().collect::<Vec<_>>().join(",")
+    }
+}
+
+/// Converts Query Parameters representation (style=form, explode=false) to a TaskQuery value
+/// as specified in https://swagger.io/docs/specification/serialization/
+/// Should be implemented in a serde deserializer
+impl std::str::FromStr for TaskQuery {
+    type Err = String;
+
+    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+        /// An intermediate representation of the struct to use for parsing.
+        #[derive(Default)]
+        #[allow(dead_code)]
+        struct IntermediateRep {
+            pub task_id: Vec<String>,
+            pub title: Vec<String>,
+            pub description: Vec<String>,
+            pub created_at: Vec<chrono::DateTime::<chrono::Utc>>,
+            pub updated_at: Vec<chrono::DateTime::<chrono::Utc>>,
+            pub created_by: Vec<String>,
+        }
+
+        let mut intermediate_rep = IntermediateRep::default();
+
+        // Parse into intermediate representation
+        let mut string_iter = s.split(',');
+        let mut key_result = string_iter.next();
+
+        while key_result.is_some() {
+            let val = match string_iter.next() {
+                Some(x) => x,
+                None => return std::result::Result::Err("Missing value while parsing TaskQuery".to_string())
+            };
+
+            if let Some(key) = key_result {
+                #[allow(clippy::match_single_binding)]
+                match key {
+                    #[allow(clippy::redundant_clone)]
+                    "taskId" => intermediate_rep.task_id.push(<String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                    #[allow(clippy::redundant_clone)]
+                    "title" => intermediate_rep.title.push(<String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                    #[allow(clippy::redundant_clone)]
+                    "description" => intermediate_rep.description.push(<String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                    #[allow(clippy::redundant_clone)]
+                    "createdAt" => intermediate_rep.created_at.push(<chrono::DateTime::<chrono::Utc> as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                    #[allow(clippy::redundant_clone)]
+                    "updatedAt" => intermediate_rep.updated_at.push(<chrono::DateTime::<chrono::Utc> as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                    #[allow(clippy::redundant_clone)]
+                    "createdBy" => intermediate_rep.created_by.push(<String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                    _ => return std::result::Result::Err("Unexpected key while parsing TaskQuery".to_string())
+                }
+            }
+
+            // Get the next key
+            key_result = string_iter.next();
+        }
+
+        // Use the intermediate representation to return the struct
+        std::result::Result::Ok(TaskQuery {
+            task_id: intermediate_rep.task_id.into_iter().next().ok_or_else(|| "taskId missing in TaskQuery".to_string())?,
+            title: intermediate_rep.title.into_iter().next().ok_or_else(|| "title missing in TaskQuery".to_string())?,
+            description: intermediate_rep.description.into_iter().next().ok_or_else(|| "description missing in TaskQuery".to_string())?,
+            created_at: intermediate_rep.created_at.into_iter().next().ok_or_else(|| "createdAt missing in TaskQuery".to_string())?,
+            updated_at: intermediate_rep.updated_at.into_iter().next().ok_or_else(|| "updatedAt missing in TaskQuery".to_string())?,
+            created_by: intermediate_rep.created_by.into_iter().next().ok_or_else(|| "createdBy missing in TaskQuery".to_string())?,
+        })
+    }
+}
+
+// Methods for converting between header::IntoHeaderValue<TaskQuery> and HeaderValue
+
+#[cfg(feature = "server")]
+impl std::convert::TryFrom<header::IntoHeaderValue<TaskQuery>> for HeaderValue {
+    type Error = String;
+
+    fn try_from(hdr_value: header::IntoHeaderValue<TaskQuery>) -> std::result::Result<Self, Self::Error> {
+        let hdr_value = hdr_value.to_string();
+        match HeaderValue::from_str(&hdr_value) {
+             std::result::Result::Ok(value) => std::result::Result::Ok(value),
+             std::result::Result::Err(e) => std::result::Result::Err(
+                 format!("Invalid header value for TaskQuery - value: {} is invalid {}",
+                     hdr_value, e))
+        }
+    }
+}
+
+#[cfg(feature = "server")]
+impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<TaskQuery> {
+    type Error = String;
+
+    fn try_from(hdr_value: HeaderValue) -> std::result::Result<Self, Self::Error> {
+        match hdr_value.to_str() {
+             std::result::Result::Ok(value) => {
+                    match <TaskQuery as std::str::FromStr>::from_str(value) {
+                        std::result::Result::Ok(value) => std::result::Result::Ok(header::IntoHeaderValue(value)),
+                        std::result::Result::Err(err) => std::result::Result::Err(
+                            format!("Unable to convert header value '{}' into TaskQuery - {}",
+                                value, err))
+                    }
+             },
+             std::result::Result::Err(e) => std::result::Result::Err(
+                 format!("Unable to convert header: {:?} to string: {}",
+                     hdr_value, e))
+        }
+    }
+}
+
+
+
+
+
+
+
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+#[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
 pub struct TaskTaskIdGet200Response {
     #[serde(rename = "task")]
-    pub task: models::Task,
+    pub task: models::TaskQuery,
 
 }
 
 
 impl TaskTaskIdGet200Response {
     #[allow(clippy::new_without_default, clippy::too_many_arguments)]
-    pub fn new(task: models::Task, ) -> TaskTaskIdGet200Response {
+    pub fn new(task: models::TaskQuery, ) -> TaskTaskIdGet200Response {
         TaskTaskIdGet200Response {
             task,
         }
@@ -1111,7 +1389,7 @@ impl std::str::FromStr for TaskTaskIdGet200Response {
         #[derive(Default)]
         #[allow(dead_code)]
         struct IntermediateRep {
-            pub task: Vec<models::Task>,
+            pub task: Vec<models::TaskQuery>,
         }
 
         let mut intermediate_rep = IntermediateRep::default();
@@ -1130,7 +1408,7 @@ impl std::str::FromStr for TaskTaskIdGet200Response {
                 #[allow(clippy::match_single_binding)]
                 match key {
                     #[allow(clippy::redundant_clone)]
-                    "task" => intermediate_rep.task.push(<models::Task as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                    "task" => intermediate_rep.task.push(<models::TaskQuery as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
                     _ => return std::result::Result::Err("Unexpected key while parsing TaskTaskIdGet200Response".to_string())
                 }
             }

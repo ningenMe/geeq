@@ -13,7 +13,7 @@
               schema:
                 properties:
                   task:
-                    $ref: "./components/task.yaml#/Task"
+                    $ref: "./components/task.yaml#/TaskQuery"
                 required:
                   - task
         '400':
