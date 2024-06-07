@@ -52,9 +52,9 @@ pub async fn select_all() -> Result<Vec<Task>, sqlx::Error> {
         .collect());
 }
 
-pub async fn insert_one(task: &Task) -> Result<(), sqlx::Error> {
+pub async fn upsert_one(task: &Task) -> Result<(), sqlx::Error> {
     sqlx::query!(
-        "INSERT INTO task (task_id, title, description, created_by) VALUES (?, ?, ?, ?)",
+        "INSERT INTO task (task_id, title, description, created_by) VALUES (?, ?, ?, ?) AS new ON DUPLICATE KEY UPDATE title = new.title, description = new.description, created_by = new.created_by",
         task.get_task_id(),
         task.get_title(),
         task.get_description(),

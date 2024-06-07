@@ -57,7 +57,7 @@ pub async fn exec(cookies: CookieJar, body: generated::models::TaskCommand) -> R
             message: "Unauthorized".to_string(),
         }));
     }
-    if infra::mysql_task_repository::insert_one(&task).await.is_err() {
+    if infra::mysql_task_repository::upsert_one(&task).await.is_err() {
         return Ok(generated::TaskPostResponse::Status500(generated::models::Common500Response {
             message: "Internal Server Error".to_string(),
         }));
