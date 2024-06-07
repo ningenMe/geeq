@@ -22,6 +22,7 @@ pub async fn exec(cookies: CookieJar) -> Result<generated::AuthMeGetResponse, St
                 }));
             }
             domain::error::CustomError::Unauthorized => todo!(),
+            domain::error::CustomError::DomainModelError => todo!(),
         },
     };
 

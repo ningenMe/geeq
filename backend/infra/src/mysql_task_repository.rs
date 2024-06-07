@@ -28,7 +28,8 @@ pub async fn select_one(task_id: &str) -> Result<Task, sqlx::Error> {
         Some(task.created_at),
         Some(task.updated_at),
         task.created_by,
-    ));
+    )
+    .unwrap());
 }
 
 pub async fn select_all() -> Result<Vec<Task>, sqlx::Error> {
@@ -46,6 +47,7 @@ pub async fn select_all() -> Result<Vec<Task>, sqlx::Error> {
                 Some(task.updated_at),
                 task.created_by,
             )
+            .unwrap()
         })
         .collect());
 }

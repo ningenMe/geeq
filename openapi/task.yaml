@@ -39,6 +39,12 @@
             application/json:
               schema:
                 $ref: "./common.yaml#/Common200Response"
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/Common400Response"
         '401':
           description: ''
           content:

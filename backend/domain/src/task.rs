@@ -1,6 +1,8 @@
 use chrono::NaiveDateTime;
 use rand::seq::IteratorRandom;
 
+use crate::error::CustomError;
+
 pub struct Task {
     task_id: String,
     title: String,
@@ -9,7 +11,7 @@ pub struct Task {
     updated_at: Option<NaiveDateTime>,
     created_by: String,
 }
-const BASE_STR: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+const BASE_STR: &str = "abcdefghijklmnopqrstuvwxyz0123456789";
 
 impl Task {
     pub fn new(
@@ -19,7 +21,7 @@ impl Task {
         created_at: Option<NaiveDateTime>,
         updated_at: Option<NaiveDateTime>,
         created_by: String,
-    ) -> Task {
+    ) -> Result<Task, CustomError> {
         let task_id = match task_id {
             Some(task_id) => task_id,
             None => {
@@ -29,15 +31,23 @@ impl Task {
             }
         };
 
-        //TODO バリデーション
-        Task {
+        if title.is_empty() {
+            return Err(CustomError::DomainModelError);
+        }
+        if title.len() > 255 {
+            return Err(CustomError::DomainModelError);
+        }
+        if description.len() > 1000 {
+            return Err(CustomError::DomainModelError);
+        }
+        Ok(Task {
             task_id: task_id,
             title: title,
             description: description,
             created_at: created_at,
             updated_at: updated_at,
             created_by: created_by,
-        }
+        })
     }
     pub fn get_task_id(&self) -> &str {
         &self.task_id

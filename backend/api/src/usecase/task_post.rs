@@ -18,6 +18,7 @@ pub async fn exec(cookies: CookieJar, body: generated::models::TaskCommand) -> R
                 }));
             }
             domain::error::CustomError::Unauthorized => todo!(),
+            domain::error::CustomError::DomainModelError => todo!(),
         },
     };
     let task = match body.task_id {
@@ -45,6 +46,12 @@ pub async fn exec(cookies: CookieJar, body: generated::models::TaskCommand) -> R
             task
         }
     };
+    if task.is_err() {
+        return Ok(generated::TaskPostResponse::Status400(generated::models::Common400Response {
+            message: "Bad Request".to_string(),
+        }));
+    }
+    let task = task.unwrap();
     if task.get_created_by() != user.get_user_id() {
         return Ok(generated::TaskPostResponse::Status403(generated::models::Common403Response {
             message: "Unauthorized".to_string(),

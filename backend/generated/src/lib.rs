@@ -97,6 +97,10 @@ pub enum TaskPostResponse {
     (models::Common200Response)
     ,
 
+    Status400
+    (models::Common400Response)
+    ,
+
     Status401
     (models::Common401Response)
     ,
