@@ -2,21 +2,22 @@ use chrono::NaiveDateTime;
 use domain::task::{TaskCommand, TaskQuery};
 
 use crate::environment::POOL;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
 struct TaskDto {
     pub task_id: String,
     pub title: String,
     pub description: String,
+    pub created_by: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
-    pub created_by: String,
 }
 
 pub async fn select_one(task_id: &str) -> Result<Option<TaskQuery>, sqlx::Error> {
     let dto = sqlx::query_as!(
         TaskDto,
-        "SELECT task_id, title, description, created_at, updated_at, created_by FROM task WHERE task_id = ?",
+        "SELECT task_id, title, description, created_by, created_at, updated_at FROM task WHERE task_id = ?",
         task_id
     )
     .fetch_optional(&*POOL)
@@ -36,7 +37,7 @@ pub async fn select_one(task_id: &str) -> Result<Option<TaskQuery>, sqlx::Error>
 }
 
 pub async fn select_all() -> Result<Vec<TaskQuery>, sqlx::Error> {
-    let dtos = sqlx::query_as!(TaskDto, "SELECT task_id, title, description, created_at, updated_at, created_by FROM task")
+    let dtos = sqlx::query_as!(TaskDto, "SELECT task_id, title, description, created_by, created_at, updated_at FROM task")
         .fetch_all(&*POOL)
         .await?;
     return Ok(dtos

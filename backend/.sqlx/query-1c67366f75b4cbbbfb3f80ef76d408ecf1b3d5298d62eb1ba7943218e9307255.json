@@ -1,6 +1,6 @@
 {
   "db_name": "MySQL",
-  "query": "SELECT task_id, title, description, created_by, submit_type, choice_json, created_at, updated_at FROM task",
+  "query": "SELECT task_id, title, description, created_by, created_at, updated_at FROM task",
   "describe": {
     "columns": [
       {
@@ -45,26 +45,6 @@
       },
       {
         "ordinal": 4,
-        "name": "submit_type",
-        "type_info": {
-          "type": "String",
-          "flags": "NOT_NULL | ENUM | NO_DEFAULT_VALUE",
-          "char_set": 224,
-          "max_size": 24
-        }
-      },
-      {
-        "ordinal": 5,
-        "name": "choice_json",
-        "type_info": {
-          "type": "Json",
-          "flags": "NOT_NULL | BLOB | BINARY",
-          "char_set": 63,
-          "max_size": 4294967295
-        }
-      },
-      {
-        "ordinal": 6,
         "name": "created_at",
         "type_info": {
           "type": "Datetime",
@@ -74,7 +54,7 @@
         }
       },
       {
-        "ordinal": 7,
+        "ordinal": 5,
         "name": "updated_at",
         "type_info": {
           "type": "Datetime",
@@ -93,10 +73,8 @@
       false,
       false,
       false,
-      false,
-      false,
       false
     ]
   },
-  "hash": "47cab8f703a45557140d8cac553f5948fe9c20832daa872e9d4fc36dc3c918c4"
+  "hash": "1c67366f75b4cbbbfb3f80ef76d408ecf1b3d5298d62eb1ba7943218e9307255"
 }
