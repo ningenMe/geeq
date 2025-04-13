@@ -1,6 +1,6 @@
 {
   "db_name": "MySQL",
-  "query": "SELECT task_id, title, description, created_at, updated_at, created_by FROM task WHERE task_id = ?",
+  "query": "SELECT task_id, title, description, created_by, submit_type, choice_json, created_at, updated_at FROM task",
   "describe": {
     "columns": [
       {
@@ -35,6 +35,36 @@
       },
       {
         "ordinal": 3,
+        "name": "created_by",
+        "type_info": {
+          "type": "VarString",
+          "flags": "NOT_NULL | MULTIPLE_KEY | NO_DEFAULT_VALUE",
+          "char_set": 224,
+          "max_size": 1020
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "submit_type",
+        "type_info": {
+          "type": "String",
+          "flags": "NOT_NULL | ENUM | NO_DEFAULT_VALUE",
+          "char_set": 224,
+          "max_size": 24
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "choice_json",
+        "type_info": {
+          "type": "Json",
+          "flags": "NOT_NULL | BLOB | BINARY",
+          "char_set": 63,
+          "max_size": 4294967295
+        }
+      },
+      {
+        "ordinal": 6,
         "name": "created_at",
         "type_info": {
           "type": "Datetime",
@@ -44,7 +74,7 @@
         }
       },
       {
-        "ordinal": 4,
+        "ordinal": 7,
         "name": "updated_at",
         "type_info": {
           "type": "Datetime",
@@ -52,22 +82,14 @@
           "char_set": 63,
           "max_size": 19
         }
-      },
-      {
-        "ordinal": 5,
-        "name": "created_by",
-        "type_info": {
-          "type": "VarString",
-          "flags": "NOT_NULL | MULTIPLE_KEY | NO_DEFAULT_VALUE",
-          "char_set": 224,
-          "max_size": 1020
-        }
       }
     ],
     "parameters": {
-      "Right": 1
+      "Right": 0
     },
     "nullable": [
+      false,
+      false,
       false,
       false,
       false,
@@ -76,5 +98,5 @@
       false
     ]
   },
-  "hash": "a9fbb9ceb459e990f1a9d6b89635029c9a711c3220e7fd8dd9146fbd1dac0528"
+  "hash": "47cab8f703a45557140d8cac553f5948fe9c20832daa872e9d4fc36dc3c918c4"
 }
