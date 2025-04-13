@@ -91,6 +91,19 @@ export interface Common401Response {
 /**
  * 
  * @export
+ * @interface Common403Response
+ */
+export interface Common403Response {
+    /**
+     * 
+     * @type {string}
+     * @memberof Common403Response
+     */
+    'message': string;
+}
+/**
+ * 
+ * @export
  * @interface Common500Response
  */
 export interface Common500Response {
@@ -104,45 +117,27 @@ export interface Common500Response {
 /**
  * 
  * @export
- * @interface Task
+ * @interface TaskCommand
  */
-export interface Task {
+export interface TaskCommand {
     /**
      * 
      * @type {string}
-     * @memberof Task
+     * @memberof TaskCommand
      */
-    'taskId': string;
+    'taskId'?: string;
     /**
      * 
      * @type {string}
-     * @memberof Task
+     * @memberof TaskCommand
      */
     'title': string;
     /**
      * 
      * @type {string}
-     * @memberof Task
+     * @memberof TaskCommand
      */
     'description': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Task
-     */
-    'createdAt': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Task
-     */
-    'updatedAt': string;
-    /**
-     * userId
-     * @type {string}
-     * @memberof Task
-     */
-    'createdBy': string;
 }
 /**
  * 
@@ -152,10 +147,53 @@ export interface Task {
 export interface TaskGet200Response {
     /**
      * 
-     * @type {Array<Task>}
+     * @type {Array<TaskQuery>}
      * @memberof TaskGet200Response
      */
-    'tasks': Array<Task>;
+    'tasks': Array<TaskQuery>;
+}
+/**
+ * 
+ * @export
+ * @interface TaskQuery
+ */
+export interface TaskQuery {
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskQuery
+     */
+    'taskId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskQuery
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskQuery
+     */
+    'description': string;
+    /**
+     * userId
+     * @type {string}
+     * @memberof TaskQuery
+     */
+    'createdBy': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskQuery
+     */
+    'createdAt': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskQuery
+     */
+    'updatedAt': string;
 }
 /**
  * 
@@ -165,10 +203,10 @@ export interface TaskGet200Response {
 export interface TaskTaskIdGet200Response {
     /**
      * 
-     * @type {Task}
+     * @type {TaskQuery}
      * @memberof TaskTaskIdGet200Response
      */
-    'task': Task;
+    'task': TaskQuery;
 }
 /**
  * 
@@ -320,6 +358,41 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @param {TaskCommand} taskCommand 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        taskPost: async (taskCommand: TaskCommand, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'taskCommand' is not null or undefined
+            assertParamExists('taskPost', 'taskCommand', taskCommand)
+            const localVarPath = `/task`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(taskCommand, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {string} taskId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -408,6 +481,18 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {TaskCommand} taskCommand 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async taskPost(taskCommand: TaskCommand, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Common200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.taskPost(taskCommand, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.taskPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {string} taskId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -460,6 +545,15 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         taskGet(options?: any): AxiosPromise<TaskGet200Response> {
             return localVarFp.taskGet(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {TaskCommand} taskCommand 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        taskPost(taskCommand: TaskCommand, options?: any): AxiosPromise<Common200Response> {
+            return localVarFp.taskPost(taskCommand, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -519,6 +613,17 @@ export class DefaultApi extends BaseAPI {
      */
     public taskGet(options?: RawAxiosRequestConfig) {
         return DefaultApiFp(this.configuration).taskGet(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {TaskCommand} taskCommand 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public taskPost(taskCommand: TaskCommand, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).taskPost(taskCommand, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

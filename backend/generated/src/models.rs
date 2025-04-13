@@ -904,15 +904,6 @@ pub struct TaskCommand {
     #[serde(rename = "description")]
     pub description: String,
 
-/// Note: inline enums are not fully supported by openapi-generator
-    #[serde(rename = "submitType")]
-    #[serde(skip_serializing_if="Option::is_none")]
-    pub submit_type: Option<Enum>,
-
-    #[serde(rename = "choiceList")]
-    #[serde(skip_serializing_if="Option::is_none")]
-    pub choice_list: Option<Vec<String>>,
-
 }
 
 
@@ -923,8 +914,6 @@ impl TaskCommand {
             task_id: None,
             title,
             description,
-            submit_type: None,
-            choice_list: None,
         }
     }
 }
@@ -951,16 +940,6 @@ impl std::string::ToString for TaskCommand {
             Some("description".to_string()),
             Some(self.description.to_string()),
 
-            // Skipping submitType in query parameter serialization
-
-
-            self.choice_list.as_ref().map(|choice_list| {
-                [
-                    "choiceList".to_string(),
-                    choice_list.iter().map(|x| x.to_string()).collect::<Vec<_>>().join(","),
-                ].join(",")
-            }),
-
         ];
 
         params.into_iter().flatten().collect::<Vec<_>>().join(",")
@@ -981,8 +960,6 @@ impl std::str::FromStr for TaskCommand {
             pub task_id: Vec<String>,
             pub title: Vec<String>,
             pub description: Vec<String>,
-            pub submit_type: Vec<Enum>,
-            pub choice_list: Vec<Vec<String>>,
         }
 
         let mut intermediate_rep = IntermediateRep::default();
@@ -1006,9 +983,6 @@ impl std::str::FromStr for TaskCommand {
                     "title" => intermediate_rep.title.push(<String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
                     #[allow(clippy::redundant_clone)]
                     "description" => intermediate_rep.description.push(<String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    #[allow(clippy::redundant_clone)]
-                    "submitType" => intermediate_rep.submit_type.push(<Enum as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    "choiceList" => return std::result::Result::Err("Parsing a container in this style is not supported in TaskCommand".to_string()),
                     _ => return std::result::Result::Err("Unexpected key while parsing TaskCommand".to_string())
                 }
             }
@@ -1022,8 +996,6 @@ impl std::str::FromStr for TaskCommand {
             task_id: intermediate_rep.task_id.into_iter().next(),
             title: intermediate_rep.title.into_iter().next().ok_or_else(|| "title missing in TaskCommand".to_string())?,
             description: intermediate_rep.description.into_iter().next().ok_or_else(|| "description missing in TaskCommand".to_string())?,
-            submit_type: intermediate_rep.submit_type.into_iter().next(),
-            choice_list: intermediate_rep.choice_list.into_iter().next(),
         })
     }
 }
@@ -1205,15 +1177,6 @@ pub struct TaskQuery {
     #[serde(rename = "description")]
     pub description: String,
 
-/// Note: inline enums are not fully supported by openapi-generator
-    #[serde(rename = "submitType")]
-    #[serde(skip_serializing_if="Option::is_none")]
-    pub submit_type: Option<Enum>,
-
-    #[serde(rename = "choiceList")]
-    #[serde(skip_serializing_if="Option::is_none")]
-    pub choice_list: Option<Vec<String>>,
-
 /// userId
     #[serde(rename = "createdBy")]
     pub created_by: String,
@@ -1234,8 +1197,6 @@ impl TaskQuery {
             task_id,
             title,
             description,
-            submit_type: None,
-            choice_list: None,
             created_by,
             created_at,
             updated_at,
@@ -1260,16 +1221,6 @@ impl std::string::ToString for TaskQuery {
 
             Some("description".to_string()),
             Some(self.description.to_string()),
-
-            // Skipping submitType in query parameter serialization
-
-
-            self.choice_list.as_ref().map(|choice_list| {
-                [
-                    "choiceList".to_string(),
-                    choice_list.iter().map(|x| x.to_string()).collect::<Vec<_>>().join(","),
-                ].join(",")
-            }),
 
 
             Some("createdBy".to_string()),
@@ -1299,8 +1250,6 @@ impl std::str::FromStr for TaskQuery {
             pub task_id: Vec<String>,
             pub title: Vec<String>,
             pub description: Vec<String>,
-            pub submit_type: Vec<Enum>,
-            pub choice_list: Vec<Vec<String>>,
             pub created_by: Vec<String>,
             pub created_at: Vec<chrono::DateTime::<chrono::Utc>>,
             pub updated_at: Vec<chrono::DateTime::<chrono::Utc>>,
@@ -1328,9 +1277,6 @@ impl std::str::FromStr for TaskQuery {
                     #[allow(clippy::redundant_clone)]
                     "description" => intermediate_rep.description.push(<String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
                     #[allow(clippy::redundant_clone)]
-                    "submitType" => intermediate_rep.submit_type.push(<Enum as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    "choiceList" => return std::result::Result::Err("Parsing a container in this style is not supported in TaskQuery".to_string()),
-                    #[allow(clippy::redundant_clone)]
                     "createdBy" => intermediate_rep.created_by.push(<String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
                     #[allow(clippy::redundant_clone)]
                     "createdAt" => intermediate_rep.created_at.push(<chrono::DateTime::<chrono::Utc> as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
@@ -1349,8 +1295,6 @@ impl std::str::FromStr for TaskQuery {
             task_id: intermediate_rep.task_id.into_iter().next().ok_or_else(|| "taskId missing in TaskQuery".to_string())?,
             title: intermediate_rep.title.into_iter().next().ok_or_else(|| "title missing in TaskQuery".to_string())?,
             description: intermediate_rep.description.into_iter().next().ok_or_else(|| "description missing in TaskQuery".to_string())?,
-            submit_type: intermediate_rep.submit_type.into_iter().next(),
-            choice_list: intermediate_rep.choice_list.into_iter().next(),
             created_by: intermediate_rep.created_by.into_iter().next().ok_or_else(|| "createdBy missing in TaskQuery".to_string())?,
             created_at: intermediate_rep.created_at.into_iter().next().ok_or_else(|| "createdAt missing in TaskQuery".to_string())?,
             updated_at: intermediate_rep.updated_at.into_iter().next().ok_or_else(|| "updatedAt missing in TaskQuery".to_string())?,
