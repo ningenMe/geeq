@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "INSERT INTO task (task_id, title, description, options, created_by) VALUES (?, ?, ?, ?, ?) AS new ON DUPLICATE KEY UPDATE title = new.title, description = new.description, options = new.options, created_by = new.created_by",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 5
+    },
+    "nullable": []
+  },
+  "hash": "52d243d53f24bc7534931a5e4a193a558f9c5d34742238d7bd7ebde105eb1ee2"
+}

@@ -1,6 +1,6 @@
 {
   "db_name": "MySQL",
-  "query": "SELECT task_id, title, description, created_by, created_at, updated_at FROM task",
+  "query": "SELECT task_id, title, description, options, created_by, created_at, updated_at FROM task WHERE task_id = ?",
   "describe": {
     "columns": [
       {
@@ -35,6 +35,16 @@
       },
       {
         "ordinal": 3,
+        "name": "options",
+        "type_info": {
+          "type": "VarString",
+          "flags": "NOT_NULL",
+          "char_set": 224,
+          "max_size": 4092
+        }
+      },
+      {
+        "ordinal": 4,
         "name": "created_by",
         "type_info": {
           "type": "VarString",
@@ -44,7 +54,7 @@
         }
       },
       {
-        "ordinal": 4,
+        "ordinal": 5,
         "name": "created_at",
         "type_info": {
           "type": "Datetime",
@@ -54,7 +64,7 @@
         }
       },
       {
-        "ordinal": 5,
+        "ordinal": 6,
         "name": "updated_at",
         "type_info": {
           "type": "Datetime",
@@ -65,9 +75,10 @@
       }
     ],
     "parameters": {
-      "Right": 0
+      "Right": 1
     },
     "nullable": [
+      false,
       false,
       false,
       false,
@@ -76,5 +87,5 @@
       false
     ]
   },
-  "hash": "1c67366f75b4cbbbfb3f80ef76d408ecf1b3d5298d62eb1ba7943218e9307255"
+  "hash": "c391fdd210f3d8cfa9b0007f205f07f11030bd14e8dd48fe2e80dbdc036546c7"
 }

@@ -6,6 +6,10 @@
           type: string
         description:
           type: string
+        options:
+          type: array
+          items:
+            type: string
         createdBy:
           type: string
           description: userId
@@ -19,6 +23,7 @@
         - taskId
         - title
         - description
+        - options
         - createdBy
         - createdAt
         - updatedAt
@@ -30,6 +35,12 @@
           type: string
         description:
           type: string
+        options:
+          type: array
+          items:
+            type: string
+          minItems: 1
       required:
         - title
         - description
+        - options

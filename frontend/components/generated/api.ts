@@ -138,6 +138,12 @@ export interface TaskCommand {
      * @memberof TaskCommand
      */
     'description': string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof TaskCommand
+     */
+    'options': Array<string>;
 }
 /**
  * 
@@ -176,6 +182,12 @@ export interface TaskQuery {
      * @memberof TaskQuery
      */
     'description': string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof TaskQuery
+     */
+    'options': Array<string>;
     /**
      * userId
      * @type {string}

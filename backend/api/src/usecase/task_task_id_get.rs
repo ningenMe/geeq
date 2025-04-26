@@ -26,6 +26,7 @@ pub async fn exec(path_params: generated::models::TaskTaskIdGetPathParams) -> Re
             task_id: task.get_task_id().to_string(),
             title: task.get_title().to_string(),
             description: task.get_description().to_string(),
+            options: task.get_options().to_vec(),
             created_at: chrono::offset::Utc.from_utc_datetime(&task.get_created_at()),
             updated_at: chrono::offset::Utc.from_utc_datetime(&task.get_updated_at()),
             created_by: task.get_created_by().to_string(),

@@ -22,7 +22,7 @@ pub async fn exec(cookies: CookieJar, body: generated::models::TaskCommand) -> R
         },
     };
     //更新したいtaskの作成
-    let update_task = match domain::task::TaskCommand::new(body.task_id, body.title, body.description, user.get_user_id().to_string()) {
+    let update_task = match domain::task::TaskCommand::new(body.task_id, body.title, body.description, body.options, user.get_user_id().to_string()) {
         Ok(task) => task,
         Err(_) => {
             return Ok(generated::TaskPostResponse::Status400(generated::models::Common400Response {

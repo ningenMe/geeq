@@ -8,6 +8,7 @@ struct Task {
     pub title: String,
     pub description: String,
     pub created_by: String,
+    pub options: Vec<String>,
 }
 pub struct TaskQuery {
     task: Task,
@@ -20,9 +21,10 @@ pub struct TaskCommand {
 }
 
 const BASE_STR: &str = "abcdefghijklmnopqrstuvwxyz0123456789";
+const OPTIONS_SEPARATOR: &str = ",";
 
 impl TaskCommand {
-    pub fn new(task_id: Option<String>, title: String, description: String, created_by: String) -> Result<TaskCommand, CustomError> {
+    pub fn new(task_id: Option<String>, title: String, description: String, options: Vec<String>, created_by: String) -> Result<TaskCommand, CustomError> {
         let (task_id, is_new) = match task_id {
             Some(task_id) => (task_id, false),
             None => {
@@ -41,12 +43,22 @@ impl TaskCommand {
         if description.len() > 1000 {
             return Err(CustomError::DomainModelError);
         }
+        if options.is_empty() {
+            return Err(CustomError::DomainModelError);
+        }
+        if options.iter().any(|option| option.is_empty()) {
+            return Err(CustomError::DomainModelError);
+        }
+        if options.iter().any(|option| option.contains(OPTIONS_SEPARATOR)) {
+            return Err(CustomError::DomainModelError);
+        }
         Ok(TaskCommand {
             task: Task {
                 task_id: task_id,
                 title: title,
                 description: description,
                 created_by: created_by,
+                options: options,
             },
             is_new: is_new,
         })
@@ -60,6 +72,12 @@ impl TaskCommand {
     pub fn get_description(&self) -> &str {
         &self.task.description
     }
+    pub fn get_options(&self) -> &Vec<String> {
+        &self.task.options
+    }
+    pub fn get_options_string(&self) -> String {
+        self.task.options.join(",")
+    }
     pub fn get_created_by(&self) -> &str {
         &self.task.created_by
     }
@@ -69,13 +87,22 @@ impl TaskCommand {
 }
 
 impl TaskQuery {
-    pub fn new(task_id: String, title: String, description: String, created_by: String, created_at: NaiveDateTime, updated_at: NaiveDateTime) -> TaskQuery {
+    pub fn new(
+        task_id: String,
+        title: String,
+        description: String,
+        options: String,
+        created_by: String,
+        created_at: NaiveDateTime,
+        updated_at: NaiveDateTime,
+    ) -> TaskQuery {
         TaskQuery {
             task: Task {
                 task_id: task_id,
                 title: title,
                 description: description,
                 created_by: created_by,
+                options: options.split(OPTIONS_SEPARATOR).map(|s| s.to_string()).collect(),
             },
             created_at: created_at,
             updated_at: updated_at,
@@ -89,6 +116,9 @@ impl TaskQuery {
     }
     pub fn get_description(&self) -> &str {
         &self.task.description
+    }
+    pub fn get_options(&self) -> &Vec<String> {
+        &self.task.options
     }
     pub fn get_created_by(&self) -> &str {
         &self.task.created_by
