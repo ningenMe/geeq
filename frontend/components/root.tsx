@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Task } from "./generated";
+import { TaskQuery } from "./generated";
 import { geeqApiClient } from "./client/GeeqApiClient";
 import { Card, CardActionArea, CardContent, Typography } from "@mui/material";
 
 export const TaskList = () => {
-  const [taskList, setTaskList] = useState<Task[]>([]);
+  const [taskList, setTaskList] = useState<TaskQuery[]>([]);
 
   useEffect(() => {
     geeqApiClient

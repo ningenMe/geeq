@@ -10,7 +10,13 @@ export default async function Page({ params }: { params: { taskId: string } }) {
       return res.data.task;
     });
   //TODO catchの時の処理を追加
-
+  const options = task.options.map((option, index) => {
+    return (
+      <div key={index}>
+        <h5>{"  " + index + " :  " + option}</h5>
+      </div>
+    );
+  });
   return (
     <>
       <Card style={{ margin: "1rem" }}></Card>
@@ -18,8 +24,13 @@ export default async function Page({ params }: { params: { taskId: string } }) {
         <CardContent>
           <h1>{task.title}</h1>
           <ReactMarkdown>{task.description}</ReactMarkdown>
-          <div>writer: {task.createdBy}</div>
-          <div>createdAt: {task.createdAt}</div>
+          <p>writer: {task.createdBy}</p>
+          <p>createdAt: {task.createdAt}</p>
+        </CardContent>
+      </Card>
+      <Card style={{ margin: "1rem" }}>
+        <CardContent>
+          <div>{options}</div>
         </CardContent>
       </Card>
     </>
